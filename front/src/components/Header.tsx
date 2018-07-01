@@ -1,13 +1,13 @@
 import * as React from 'react'
 import logo from '#/images/logo.svg'
 
-export interface Props {
+export interface HeaderProps {
 }
 
-class Header extends React.Component<Props, object> {
+class Header extends React.Component<HeaderProps, object> {
   render() {
     return (
-			<div className='Header'>
+			<div className="Header">
 				<header className="App-header">
 					<img src={logo} className="App-logo" alt="logo" />
 					<h1 className="App-title">Welcome to React</h1>
@@ -16,8 +16,8 @@ class Header extends React.Component<Props, object> {
 					To get started, edit <code>src/App.tsx</code> and save to reload.
 				</p>
 			</div>
-    );
+    )
   }
 }
 
-export default Header;
+export default Header

@@ -49,6 +49,7 @@
     "webpack",
     "jest",
     "src/setupTests.ts",
-    "src/**/*.spec.*"
+    "src/**/*.spec.*",
+    "src/**/*.test.*"
   ]
 }

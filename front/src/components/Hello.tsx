@@ -1,11 +1,11 @@
 import * as React from 'react'
 
-export interface Props {
-  name: string;
-  enthusiasmLevel?: number;
+export interface HelloProps {
+  name: string
+  enthusiasmLevel?: number
 }
 
-class Hello extends React.Component<Props, object> {
+class Hello extends React.Component<HelloProps, object> {
   render() {
     const { name, enthusiasmLevel = 1 } = this.props
 
@@ -19,13 +19,13 @@ class Hello extends React.Component<Props, object> {
           Hello {name + getExclamationMarks(enthusiasmLevel)}
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default Hello;
+export default Hello
 
 // helpers
 function getExclamationMarks(numChars: number) {
-  return Array(numChars + 1).join('!');
+  return Array(numChars + 1).join('!')
 }

@@ -22,7 +22,7 @@
     "no-namespace": false,
     "no-null-keyword": false,
     "no-require-imports": false,
-    "no-submodule-imports": [true, "@src", "rxjs"],
+    "no-submodule-imports": [false, "@src", "rxjs"],
     "no-this-assignment": [true, { "allow-destructuring": true }],
     "no-trailing-whitespace": true,
     "object-literal-sort-keys": false,
@@ -54,14 +54,17 @@
       "check-format",
       "allow-pascal-case",
       "allow-leading-underscore"
-    ]
+    ],
+    "jsx-no-lambda": false
   },
   "emitErrors": true,
   "failOnHint": true,
   "typeCheck": true,
   "fix": true,
-  "linterOptions": {
+  "cliOptions": {
     "exclude": [
+      "src/**/*.spec.tsx",
+      "src/**/*.test.tsx",
       "config/**/*.js",
       "node_modules/**/*.ts"
     ]

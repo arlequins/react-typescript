@@ -8,9 +8,9 @@ import Footer from '../components/Footer'
 export const Home = () => {
   return (
     <div className={styles.App}>
-      <Footer />
-      <Hello name="TypeScript" enthusiasmLevel={10} />
       <Header />
+      <Hello name="TypeScript" enthusiasmLevel={10} />
+      <Footer />
     </div>
   )
 }
