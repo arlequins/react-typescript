@@ -1,2 +1,2 @@
-export * from './Common';
-export * from './InitialFire';
+export * from './Common'
+export * from './InitialFire'

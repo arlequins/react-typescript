@@ -2,6 +2,8 @@
   "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
   "rulesDirectory": ["tslint-plugin-prettier"],
   "rules": {
+    "quotemark": [true, "single", "jsx-double"],
+    "semicolon": [true, "never"],
     "arrow-parens": false,
     "arrow-return-shorthand": [false],
     "comment-format": [true, "check-space"],
@@ -30,8 +32,6 @@
     "ordered-imports": [false],
     "prefer-method-signature": false,
     "prefer-template": [true, "allow-single-concat"],
-    "quotemark": [true, "single", "jsx-double"],
-    "semicolon": [true, "never"],
     "trailing-comma": [
       true,
       {
@@ -54,8 +54,7 @@
       "check-format",
       "allow-pascal-case",
       "allow-leading-underscore"
-    ],
-    "prettier": true
+    ]
   },
   "emitErrors": true,
   "failOnHint": true,

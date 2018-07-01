@@ -7,8 +7,8 @@
   "moduleFileExtensions": ["ts", "tsx", "js"],
   "moduleNameMapper": {
     "^Components/(.*)": "./src/components/$1",
-    "\\.(css|less|sass|scss)$": "<rootDir>/__mocks__/styleMock.js",
-    "\\.(gif|ttf|eot|svg)$": "<rootDir>/__mocks__/fileMock.js"
+    "\\.(css|less|sass|scss)$": "<rootDir>/config/__mocks__/styleMock.js",
+    "\\.(gif|ttf|eot|svg)$": "<rootDir>/config/__mocks__/fileMock.js"
   },
   "globals": {
     "window": {},

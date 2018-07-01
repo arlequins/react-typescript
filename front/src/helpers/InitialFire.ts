@@ -1,7 +1,7 @@
 class Common {
   init(array: number[]): void {
     array.map((v) => {
-      console.log(v + 1000);
+      // console.log(v + 1000)
     })
   }
 }
