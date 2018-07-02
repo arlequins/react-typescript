@@ -1,49 +1,40 @@
 import * as React from 'react'
-import { render } from 'react-dom'
-// import { Provider } from 'react-redux'
+import * as ReactDOM from 'react-dom'
+import { createStore, applyMiddleware, compose } from 'redux'
+import { Router, Route, IndexRoute, hashHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
+import reduxThunk from 'redux-thunk'
+import { Provider } from 'react-redux'
+import {reducers} from './reducers'
+import {App} from './app'
+import {LoginContainer} from './pages/login'
+import {StudentListContainer} from './pages/student-list'
+import {StudentDetailContainer} from './pages/student-detail'
 
-// side-effect imports
-// tslint:disable:no-import-side-effect
-// import './rxjs-imports'
 
-// import store from './store'
-import { Home } from './pages'
-
-// Import bootstrap css
-import 'bootstrap/dist/css/bootstrap.min.css'
-
-// current css
-import './index.css'
-
-const devMode = process.env.NODE_ENV !== 'production'
-
-// const Root = (
-//   <Provider store={store}>
-//     <Home />
-//   </Provider>
-// )
-
-const Root = (
-    <Home />
+const store = createStore(
+  reducers,
+  compose(
+    applyMiddleware(reduxThunk),
+    window.devToolsExtension ? window.devToolsExtension() : f => f
+  )
 )
 
-render(Root, document.getElementById('root') as HTMLElement)
+const history = syncHistoryWithStore(hashHistory, store)
 
-// service-workers
-import * as OfflinePluginRuntime from 'offline-plugin/runtime'
+ReactDOM.render(
+  <Provider store={store}>
+    <div>
+      <Router history={history}>
+        <Route path="/" component={App}>
+          <IndexRoute component={LoginContainer}/>
+          <Route path="login" component={LoginContainer}/>
+          <Route path="student-list" component={StudentListContainer}/>
+          <Route path="student-detail" component={StudentDetailContainer}/>
+        </Route>
+      </Router>
+    </div>
+  </Provider>,
+  document.getElementById('root')
+)
 
-if (!devMode) {
-  OfflinePluginRuntime.install({
-    onUpdateReady: () => OfflinePluginRuntime.applyUpdate(),
-    onUpdated: () => location.reload(),
-  })
-}
-
-// post processing and checking
-import { Common, InitialFire } from './helpers'
-import $ from 'jquery'
-Common()
-
-const array = [1, 2, 3, 4, 5]
-InitialFire.init(array)
-console.log($('#root'))
