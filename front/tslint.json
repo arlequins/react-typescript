@@ -59,14 +59,15 @@
   },
   "emitErrors": true,
   "failOnHint": true,
-  "typeCheck": true,
+  "typeCheck": false,
   "fix": true,
   "cliOptions": {
     "exclude": [
       "src/**/*.spec.tsx",
       "src/**/*.test.tsx",
       "config/**/*.js",
-      "node_modules/**/*.ts"
+      "node_modules/**/*.ts",
+      "types/*"
     ]
   }
 }

@@ -1,0 +1,20 @@
+import * as React from 'react'
+import * as style from './style.css'
+
+export namespace App {
+  export interface Props {
+  }
+}
+export class App extends React.Component<App.Props> {
+  constructor(props: App.Props, context?: any) {
+    super(props, context)
+  }
+
+  render() {
+    return (
+      <div className={style.normal}>
+        <h1>hello</h1>
+      </div>
+    )
+  }
+}

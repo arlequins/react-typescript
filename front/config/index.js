@@ -1,4 +1,5 @@
 const path = require('path')
+const devMode = process.env.NODE_ENV !== 'production'
 
 const rootPath = {
   absolutePath: path.join(__dirname, '..'),
@@ -23,7 +24,9 @@ module.exports = {
       tsConfigFile: 'tsconfig.json'
     },
     cssLoader: {
+      modules: true,
       importLoaders: 1,
+      localIdentName: !devMode ? '[hash:base64:5]' : '[local]__[hash:base64:5]',
       sourceMap: true,
       minimize: true,
       camelCase: true
@@ -34,7 +37,7 @@ module.exports = {
   },
   dev: {
     assetsPublicPath : '',
-    template: path.join(rootPath.absolutePath, commonPath.public, 'index.html'),
+    template: path.join(rootPath.absolutePath, commonPath.src, 'assets', 'index.html'),
     filename: path.join('index.html'),
     resolve: path.join(rootPath.absolutePath, '.'),
     port: 8080

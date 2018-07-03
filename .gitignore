@@ -1,4 +1,6 @@
 .vscode
+react-redux-typescript-boilerplate/
+backup/
 **/node_modules
 example*/
 cross*/
