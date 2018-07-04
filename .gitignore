@@ -1,3 +1,4 @@
+**/.gradle
 **/package-lock.json
 .vscode
 react-redux-typescript-boilerplate/

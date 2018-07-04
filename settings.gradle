@@ -1,0 +1,3 @@
+rootProject.name = 'react-typescript'
+include 'front'
+project(':front').projectDir = new File('front')
