@@ -19,7 +19,7 @@ const cleanOptions = {
   dry:      false
 }
 
-exports.devMode = process.env.NODE_ENV !== 'production'
+exports.devMode = !(process.argv.indexOf('-p') >= 0 || process.env.NODE_ENV === 'production')
 
 exports.MiniCssExtractPlugin = MiniCssExtractPlugin
 

@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const path = require('path')
 const utils = require('./utils')
 const config = require('./config')
@@ -87,6 +88,10 @@ module.exports = {
     ]
   },
   plugins: devMode ? [
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development', // use 'development' unless process.env.NODE_ENV is defined
+      DEBUG: false
+    }),
     utils.miniCssExtractPlugin,
     utils.htmlWebpackPlugin,
     utils.copyWebpackPlugin

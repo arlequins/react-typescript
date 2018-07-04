@@ -5,7 +5,7 @@ export interface InstallOptions {
    *
    * @memberOf InstallOptions
    */
-  onInstalled?: () => void;
+  onInstalled?: () => void
 
   /**
    * Not supported for AppCache.
@@ -14,7 +14,7 @@ export interface InstallOptions {
    *
    * @memberOf InstallOptions
    */
-  onUpdating?: () => void;
+  onUpdating?: () => void
 
   /**
    * Event called when onUpdating phase finished.
@@ -23,7 +23,7 @@ export interface InstallOptions {
    *
    * @memberOf InstallOptions
    */
-  onUpdateReady?: () => void;
+  onUpdateReady?: () => void
 
   /**
    * Event called when upUpdating phase failed by some reason.
@@ -32,7 +32,7 @@ export interface InstallOptions {
    *
    * @memberOf InstallOptions
    */
-  onUpdateFailed?: () => void;
+  onUpdateFailed?: () => void
 
   /**
    * Event called when update is applied,
@@ -41,7 +41,7 @@ export interface InstallOptions {
    *
    * @memberOf InstallOptions
    */
-  onUpdated?: () => void;
+  onUpdated?: () => void
 }
 
 /**
@@ -53,7 +53,7 @@ export interface InstallOptions {
  *
  * @memberOf RuntimeStatic
  */
-export function install(options?: InstallOptions): void;
+export function install(options?: InstallOptions): void
 
 /**
  * Used to apply update for existing installation.
@@ -61,11 +61,11 @@ export function install(options?: InstallOptions): void;
  *
  * @memberOf RuntimeStatic
  */
-export function applyUpdate(): void;
+export function applyUpdate(): void
 
 /**
  * Performs check for updates of new ServiceWorker/AppCache.
  *
  * @memberOf RuntimeStatic
  */
-export function update(): void;
+export function update(): void

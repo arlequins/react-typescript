@@ -1,10 +1,7 @@
-import 'react-redux';
+import 'react-redux'
 import {
-  Component,
-  ComponentClass,
-  ComponentType,
-  StatelessComponent
-} from 'react';
+  ComponentClass
+} from 'react'
 
 declare module 'react-redux' {
   // Add removed inferrable type to support connect as decorator
@@ -21,6 +18,6 @@ declare module 'react-redux' {
       mapDispatchToProps?: MapDispatchToPropsParam<TDispatchProps, TOwnProps>,
       mergeProps?: MergeProps<TStateProps, TDispatchProps, TOwnProps, TMergedProps>,
       options?: Options
-    ): InferableComponentDecorator<TOwnProps>;
+    ): InferableComponentDecorator<TOwnProps>
   }
 }

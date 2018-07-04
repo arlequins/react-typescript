@@ -14,8 +14,8 @@
     "test": "jest --config jest.config.json",
     "test:watch": "jest --config jest.config.json --watch",
     "test:update": "jest --config jest.config.json -u",
-    "start": "NODE_ENV=development webpack-dev-server --mode development --open --hot --progress --color --port 5000",
-    "build": "NODE_ENV=production webpack --mode production -p --progress --colors",
+    "start": "webpack-dev-server --mode development --open --hot --progress --color --port 5000",
+    "build": "webpack --mode production -p --progress --colors",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
   },
   "devDependencies": {

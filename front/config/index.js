@@ -1,5 +1,5 @@
 const path = require('path')
-const devMode = process.env.NODE_ENV !== 'production'
+const devMode = !(process.argv.indexOf('-p') >= 0 || process.env.NODE_ENV === 'production')
 
 const rootPath = {
   absolutePath: path.join(__dirname, '..'),
