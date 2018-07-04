@@ -1,3 +1,5 @@
+def source = 'front'
+
 buildscript {
   repositories {
     maven {
@@ -10,25 +12,24 @@ buildscript {
 }
 
 allprojects {
-  apply plugin: "com.moowork.node"
 }
 
 project(':front') {
   apply plugin: 'com.moowork.node'
-  apply plugin: 'com.moowork.gulp'
 
-  task build {
-    def frontPath = "${project.projectDir}"
-
-    node {
-      nodeModulesDir = file("$frontPath")
-      workDir = file("$frontPath")
-
-      npmVersion = '6.1.0'
-      version = '8.9.4'
-      download = true
-    }
-
-    npm_install.dependsOn(npm_cache_clean)
+  node {
+    npmVersion = '6.1.0'
+    version = '8.9.4'
+    download = true
   }
+
+  task reactBuild(type: NpmTask) {
+    args = ['run', 'build']
+  }
+
+  reactBuild.dependsOn npm_install
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.8.1'
 }

@@ -1,3 +1,4 @@
+**/node-v*-*-x*/
 **/.gradle
 **/package-lock.json
 .vscode
