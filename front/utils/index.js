@@ -7,6 +7,7 @@ const OfflinePlugin = require('offline-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const S3Uploader = require('webpack-s3-uploader')
 
 // the path(s) that should be cleaned
 const pathsToClean = config.common.path.cleanUp
@@ -18,6 +19,23 @@ const cleanOptions = {
   verbose:  true,
   dry:      false
 }
+
+let deployMode = !(process.argv.indexOf('--progress') >= 0)
+
+const awsInfo = {
+  id: process.env.AWS_ACCESS_KEY_ID,
+  key: process.env.AWS_SECRET_ACCESS_KEY,
+  bucket: process.env.AWS_BUCKET,
+  path: process.env.BASE_PATH
+}
+
+if (awsInfo.key === undefined || awsInfo.key.length === 0) {
+  deployMode = false
+}
+
+exports.deployMode = deployMode
+
+exports.deployPath = process.env.DEPLOY_PATH
 
 exports.devMode = !(process.argv.indexOf('-p') >= 0 || process.env.NODE_ENV === 'production')
 
@@ -60,6 +78,17 @@ exports.uglifyJsPlugin = new UglifyJsPlugin({
 })
 
 exports.optimizeCSSAssetsPlugin = new OptimizeCSSAssetsPlugin({})
+
+exports.s3Uploader = new S3Uploader({
+  s3Options: {
+    accessKeyId: awsInfo.id,
+    secretAccessKey: awsInfo.key
+  },
+  s3UploadOptions: {
+    Bucket: awsInfo.bucket
+  },
+  basePath: awsInfo.path
+})
 
 exports.assetsPath = (_path) => {
   var assetsSubDirectory = config.build.assetsForCopyingSubDirectory

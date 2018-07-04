@@ -27,7 +27,19 @@ project(':front') {
     args = ['run', 'build']
   }
 
+  task reactDeploy(type: NpmTask) {
+    environment = [
+      AWS_ACCESS_KEY_ID: "$arg1",
+      AWS_SECRET_ACCESS_KEY: "$arg2",
+      DEPLOY_PATH: "$arg3",
+      AWS_BUCKET: "$arg4",
+      BASE_PATH: "$arg5"
+    ]
+    args = ['run', 'deploy']
+  }
+
   reactBuild.dependsOn npm_install
+  reactDeploy.dependsOn npm_install
 }
 
 task wrapper(type: Wrapper) {

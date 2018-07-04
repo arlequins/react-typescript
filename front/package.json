@@ -16,6 +16,7 @@
     "test:update": "jest --config jest.config.json -u",
     "start": "webpack-dev-server --mode development --open --hot --progress --color --port 5000",
     "build": "webpack --mode production -p --progress --colors",
+    "deploy": "webpack --mode production -p --colors",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\""
   },
   "devDependencies": {
@@ -102,6 +103,7 @@
     "rxjs-compat": "^6.2.1",
     "tslib": "^1.9.3",
     "typesafe-actions": "^2.0.4",
-    "utility-types": "^2.0.0"
+    "utility-types": "^2.0.0",
+    "webpack-s3-uploader": "^1.1.13"
   }
 }

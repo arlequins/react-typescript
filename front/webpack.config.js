@@ -3,6 +3,7 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('./config')
 const devMode = utils.devMode
+const deployMode = utils.deployMode
 
 module.exports = {
   entry: {
@@ -13,7 +14,7 @@ module.exports = {
     path: config.build.assetsJavascripts,
     filename: `${config.common.path.static}/js/[name].js`,
     chunkFilename: `${config.common.path.static}/js/[chunkhash].js`,
-    publicPath: devMode ? config.dev.assetsPublicPath : config.build.assetsPublicPath
+    publicPath: devMode ? config.dev.assetsPublicPath : deployMode ? utils.deployPath : config.build.assetsPublicPath
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.json'],
@@ -95,6 +96,13 @@ module.exports = {
     utils.miniCssExtractPlugin,
     utils.htmlWebpackPlugin,
     utils.copyWebpackPlugin
+  ] : deployMode ? [
+    utils.miniCssExtractPlugin,
+    utils.cleanWebPackPlugin,
+    utils.htmlWebpackPlugin,
+    utils.copyWebpackPlugin,
+    utils.s3Uploader,
+    utils.offlinePlugin
   ] : [
     utils.miniCssExtractPlugin,
     utils.cleanWebPackPlugin,
@@ -111,8 +119,8 @@ module.exports = {
       name: true,
       cacheGroups: {
         commons: {
-          chunks: 'initial',
-          minChunks: 2
+          chunks: 'all',
+          minChunks: 10
         },
         vendors: {
           test: /[\\/]node_modules[\\/]/,
@@ -123,7 +131,7 @@ module.exports = {
     },
     runtimeChunk: true
   },
-  devtool: 'source-map',
+  // devtool: 'source-map',
   externals: {
     // 'jquery': '$'
     // 'react': 'React',
