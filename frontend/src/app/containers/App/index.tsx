@@ -37,6 +37,7 @@ export namespace App {
     actions: bindActionCreators(omit(TodoActions, 'Type'), dispatch),
   })
 )
+
 export class App extends React.Component<App.Props> {
   static defaultProps: Partial<App.Props> = {
     filter: TodoModel.Filter.SHOW_ALL,

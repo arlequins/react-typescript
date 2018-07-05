@@ -1,3 +1,4 @@
 rootProject.name = 'react-typescript'
-include 'front'
-project(':front').projectDir = new File('front')
+include 'frontend', 'backend'
+project(':backend').projectDir = new File('backend')
+project(':frontend').projectDir = new File('frontend')

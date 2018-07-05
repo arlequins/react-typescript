@@ -1,20 +1,66 @@
-def source = 'front'
+def s3Deploy = new java.util.HashMap()
+
+if (project.hasProperty('deploy:s3')) {
+  def accessKeyId = "$accessKeyId"
+  def secrectAccessKey = "$secrectAccessKey"
+  s3Deploy = [
+    AWS_ACCESS_KEY_ID: accessKeyId,
+    AWS_SECRET_ACCESS_KEY: secrectAccessKey,
+    DEPLOY_PATH: "$deployPath",
+    AWS_BUCKET: "$awsBucket",
+    BASE_PATH: "$basePath"
+  ]
+}
 
 buildscript {
   repositories {
     maven {
       url "https://plugins.gradle.org/m2/"
     }
+    jcenter()
   }
   dependencies {
     classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
+    classpath "org.hidetake:gradle-ssh-plugin:2.9.0"
   }
 }
 
 allprojects {
 }
 
-project(':front') {
+project(':backend') {
+  apply plugin: 'org.hidetake.ssh'
+
+  remotes {
+    web01 {
+      role 'masterNode'
+      host = '127.0.0.1'
+      user = 'setine'
+      port = 23
+      identity = file("${System.getProperty('user.home')}/.ssh/id_rsa")
+    }
+    web02 {
+      host = '192.168.1.102'
+      user = 'jenkins'
+    }
+  }
+
+  task publish {
+    doLast {
+      ssh.run {
+        session(remotes.web01) {
+          def result = execute 'sudo systemctl status nginx'
+
+          put from: "${project.projectDir}", into: '/home/setine'
+
+          println result
+        }
+      }
+    }
+  }
+}
+
+project(':frontend') {
   apply plugin: 'com.moowork.node'
 
   node {
@@ -23,23 +69,17 @@ project(':front') {
     download = true
   }
 
-  task reactBuild(type: NpmTask) {
+  task build(type: NpmTask) {
     args = ['run', 'build']
   }
 
-  task reactDeploy(type: NpmTask) {
-    environment = [
-      AWS_ACCESS_KEY_ID: "$arg1",
-      AWS_SECRET_ACCESS_KEY: "$arg2",
-      DEPLOY_PATH: "$arg3",
-      AWS_BUCKET: "$arg4",
-      BASE_PATH: "$arg5"
-    ]
-    args = ['run', 'deploy']
+  task reactDeployS3(type: NpmTask) {
+    environment = s3Deploy
+    args = ['run', 'deploy:s3']
   }
 
-  reactBuild.dependsOn npm_install
-  reactDeploy.dependsOn npm_install
+  build.dependsOn npm_install
+  reactDeployS3.dependsOn npm_install
 }
 
 task wrapper(type: Wrapper) {
