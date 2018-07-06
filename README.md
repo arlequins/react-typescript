@@ -24,12 +24,18 @@ npm run deploy
 ## GRADLEW CMD
 ### BUILD
 ```
-sh gradlew reactBuild
+sh gradlew build
+```
+
+### DEPLOY TO SERVER
+```
+sh gradlew deployServer
+sh gradlew publishServer
 ```
 
 ### DEPLOY TO S3
 ```
-sh gradlew reactDeployS3 \
+sh gradlew deployS3 \
 -Pdeploy:s3=true \
 -PaccessKeyId="AWS_ACCESS_KEY_ID" \
 -PsecrectAccessKey="AWS_SECRET_ACCESS_KEY" \

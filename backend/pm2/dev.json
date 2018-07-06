@@ -1,0 +1,7 @@
+{
+  "name" : "api",
+  "script" : "/usr/local/share/app/index.js",
+  "env_dev" : {
+    "MONGODB_URI": "mongodb://127.0.0.1:27017/setine"
+  }
+}

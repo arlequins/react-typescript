@@ -31,29 +31,30 @@ allprojects {
 project(':backend') {
   apply plugin: 'org.hidetake.ssh'
 
+  def fromFolder = "$project.projectDir"
+  def destFolder = '/usr/local/share/app'
+
   remotes {
     web01 {
       role 'masterNode'
-      host = '127.0.0.1'
+      host = 'localhost'
       user = 'setine'
       port = 23
       identity = file("${System.getProperty('user.home')}/.ssh/id_rsa")
     }
-    web02 {
-      host = '192.168.1.102'
-      user = 'jenkins'
-    }
   }
 
-  task publish {
+  task publishServer {
     doLast {
       ssh.run {
         session(remotes.web01) {
-          def result = execute 'sudo systemctl status nginx'
+          def deleteCurrentProcess = execute 'pm2 delete all'
 
-          put from: "${project.projectDir}", into: '/home/setine'
+          new File(fromFolder).listFiles().each{put (from:it, into:destFolder)}
 
-          println result
+          def initialInstall = execute "cd $destFolder && npm install"
+          def registerWorker = execute "pm2 start $destFolder/pm2/dev.json --env dev"
+          def reload = execute 'sudo systemctl restart nginx'
         }
       }
     }
@@ -73,13 +74,19 @@ project(':frontend') {
     args = ['run', 'build']
   }
 
-  task reactDeployS3(type: NpmTask) {
+  task deployServer(dependsOn: build, type: Copy) {
+    from "$project.projectDir/dist"
+    into "$project.projectDir/../backend/www"
+    include "**/*.*"
+  }
+
+  task deployS3(type: NpmTask) {
     environment = s3Deploy
     args = ['run', 'deploy:s3']
   }
 
   build.dependsOn npm_install
-  reactDeployS3.dependsOn npm_install
+  deployS3.dependsOn npm_install
 }
 
 task wrapper(type: Wrapper) {
