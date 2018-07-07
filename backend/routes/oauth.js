@@ -1,24 +1,28 @@
 const parser = require('restify').plugins.bodyParser()
-const oauthWork = require('../models')
+const lifetime = 60 * 60 * 60 * 60 * 60
+
 const oauthConfig = {
   token: {
-    accessTokenLifetime: 60 * 60 * 60 * 60 * 60,
-    refreshTokenLifetime: 60 * 60 * 60 * 60 * 60,
+    accessTokenLifetime: lifetime,
+    refreshTokenLifetime: lifetime,
     requireClientAuthentication: {
-      client_credentials: false
+      client_credentials: false,
+      authorization_code: false
     },
     allowExtendedTokenAttributes: true,
     scope: 'profile'
   },
   authorize: {
-
+    authorizationCodeLifetime: lifetime
   }
 }
 
 /** Make through OAuth **/
 module.exports = (server, apiUrl) => {
   server.post(`${apiUrl}/oauth/token`, parser, server.oauth.token(oauthConfig.token))
+
   server.post(`${apiUrl}/oauth/authorize`, parser, server.oauth.authorize(oauthConfig.authorize))
+
   server.get(`${apiUrl}/oauth/authenticate`, server.oauth.authenticate(), function(req,res){
     if (res.statusCode !== 401)  {
       res.json({

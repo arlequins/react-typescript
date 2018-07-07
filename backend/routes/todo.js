@@ -14,8 +14,6 @@ module.exports = function(server, apiUrl) {
 	 * POST
 	 */
 	server.post(requestUrl, (req, res, next) => {
-		console.log(req)
-		console.log(res)
 		if (!req.is('application/json')) {
 			return next(new errors.InvalidContentError("Expects 'application/json'"))
 		}

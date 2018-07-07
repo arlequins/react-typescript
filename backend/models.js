@@ -50,7 +50,8 @@ function getClient(clientId, clientSecret) {
   console.log("getClient",clientId, clientSecret)
   const options = {client_id: clientId};
   if (clientSecret) options.client_secret = clientSecret;
-
+  console.log(clientId)
+  console.log(clientSecret)
   return OAuthClient
     .findOne(options)
     .then(function (client) {
@@ -171,6 +172,8 @@ function getAuthorizationCode(code) {
     .populate('User')
     .populate('OAuthClient')
     .then(function (authCodeModel) {
+      console.log("####")
+      console.log(authCodeModel)
       if (!authCodeModel) return false;
       var client = authCodeModel.OAuthClient
       var user = authCodeModel.User
@@ -189,18 +192,21 @@ function getAuthorizationCode(code) {
 
 function saveAuthorizationCode(code, client, user) {
   console.log("saveAuthorizationCode",code, client, user)
-  return OAuthAuthorizationCode
-    .create({
-      expires: code.expiresAt,
-      OAuthClient: client._id,
-      authorization_code: code.authorizationCode,
-      User: user._id,
-      scope: code.scope
-    })
+  return Promise.all([
+    OAuthAuthorizationCode
+      .create({
+        expires: code.expiresAt,
+        OAuthClient: client._id,
+        authorization_code: code.authorizationCode,
+        User: user._id,
+        scope: code.scope
+      })
+    ])
     .then(function () {
       code.code = code.authorizationCode
       return code
     }).catch(function (err) {
+      console.log(222)
       console.log("saveAuthorizationCode - Err: ", err)
     });
 }

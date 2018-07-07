@@ -3,7 +3,7 @@ const restify = require('restify')
 const mongoose = require('mongoose')
 const restifyPlugins = require('restify').plugins
 const OAuthServer = require('restify-oauth-server')
-// const seeds = require('./seed')
+const seeds = require('./seed')
 
 /**
   * Initialize Server
@@ -18,6 +18,8 @@ const server = restify.createServer({
   */
 server.oauth = new OAuthServer({
 	model: require('./models'),
+	grants: ['authorization_code', 'client_credentials'],
+	debug: true,
   accessTokenLifetime: 5 * 60 * 60
 })
 
@@ -45,7 +47,7 @@ server.listen(config.port, () => {
 		process.exit(1)
 	})
 	db.once('open', () => {
-		// seeds()
+		seeds()
 		require('./routes')(server, config.apiUrl)
 		console.log(`Server is listening on port ${config.port}`)
 	})

@@ -1,3 +1,5 @@
+const oauthWork = require('../models')
+
 /** Control Private through OAuth **/
 module.exports = function(server, apiUrl) {
   server.post('/getUser', (req, res, next) => {

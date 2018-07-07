@@ -14,3 +14,5 @@ cross*/
 **/www
 **/node-oauth2-server-implementation/
 **/restify-oauth2/
+**/.project
+**/.settings

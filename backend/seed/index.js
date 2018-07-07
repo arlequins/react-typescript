@@ -1,96 +1,64 @@
-/**
- * Created by Manjesh on 14-05-2016.
- *
- * Populate DB with sample data on server start
- * to disable, edit config/environment/index.js, and set `seedDB: false`
- */
-
 'use strict';
-var mongodb = require('../oauth');
+const mongodb = require('../oauth')
 
-var Thing = mongodb.Thing;
-var OAuthAccessToken = mongodb.OAuthAccessToken
-var OAuthAuthorizationCode = mongodb.OAuthAuthorizationCode
-var OAuthClient = mongodb.OAuthClient
-var OAuthRefreshToken = mongodb.OAuthRefreshToken
-var OAuthScope = mongodb.OAuthScope
-var User = mongodb.User
+const Thing = mongodb.Thing;
+const OAuthAccessToken = mongodb.OAuthAccessToken
+const OAuthAuthorizationCode = mongodb.OAuthAuthorizationCode
+const OAuthClient = mongodb.OAuthClient
+const OAuthRefreshToken = mongodb.OAuthRefreshToken
+const OAuthScope = mongodb.OAuthScope
+const User = mongodb.User
 
+const utils = require('../utils')
 
 //OAuthAccessToken.sync({force:config.seedDBForce})
 //OAuthRefreshToken.sync({force:config.seedDBForce})
 //OAuthAuthorizationCode.sync({force:config.seedDBForce})
 
-const seeds = () => {
-  OAuthScope.find({}).remove()
-  .then(function() {
-    OAuthScope.create({
-        scope: 'profile',
-        is_default: false
-      },{
-        scope: 'defaultscope',
-        is_default: true
-      })
-      .then(function() {
-        console.log('finished populating OAuthScope');
-      });
-  });
-User.find({}).remove()
-  .then(function() {
-    User.create({
-        username: 'admin',
-        password: 'admin'
-      })
-      .then(function(user) {
-        console.log('finished populating users',user);
-        return OAuthClient.find({}).remove()
-          .then(function() {
-            OAuthClient.create({
-                client_id:'democlient',
-                client_secret:'democlientsecret',
-                redirect_uri:'http://localhost/cb',
-                User:user._id
-              })
-              .then(function(client) {
-                console.log('finished populating OAuthClient',client);
-              }).catch(console.log);
-          });
-
-      });
-  });
+const initialPassword = utils.oauthTools.saltHashPassword('admin')
 
 
-Thing.find({}).remove()
-  .then(function(){
-  Thing.create({
-  name: 'Development Tools',
-  info: 'Integration with popular tools such as Bower, Grunt, Babel, Karma, ' +
-  'Mocha, JSHint, Node Inspector, Livereload, Protractor, Jade, ' +
-  'Stylus, Sass, and Less.'
-  }, {
-    name: 'Server and Client integration',
-    info: 'Built with a powerful and fun stack: MongoDB, Express, ' +
-    'AngularJS, and Node.'
-  }, {
-    name: 'Smart Build System',
-    info: 'Build system ignores `spec` files, allowing you to keep ' +
-    'tests alongside code. Automatic injection of scripts and ' +
-    'styles into your index.html'
-  }, {
-    name: 'Modular Structure',
-    info: 'Best practice client and server structures allow for more ' +
-    'code reusability and maximum scalability'
-  }, {
-    name: 'Optimized Build',
-    info: 'Build process packs up your templates as a single JavaScript ' +
-    'payload, minifies your scripts/css/images, and rewrites asset ' +
-    'names for caching.'
-  }, {
-    name: 'Deployment Ready',
-    info: 'Easily deploy your app to Heroku or Openshift with the heroku ' +
-    'and openshift subgenerators'
-  });
-});
+const seeds = async () => {
+  const isData = await User.find({username: 'setine'})
+  const currnetStatus = isData.length === 0 ? true : false
+
+  if (currnetStatus) {
+    OAuthScope.find({}).remove()
+    .then(function() {
+      OAuthScope.create({
+          scope: 'website',
+          is_default: false
+        },{
+          scope: 'default',
+          is_default: true
+        })
+        .then(function() {
+          console.log('finished populating OAuthScope');
+        });
+    });
+  User.find({}).remove()
+    .then(function() {
+      User.create({
+          username: 'setine',
+          password: utils.oauthTools.saltHashPassword('admin')
+        })
+        .then(function(user) {
+          console.log('finished populating users',user);
+          return OAuthClient.find({}).remove()
+            .then(function() {
+              OAuthClient.create({
+                  client_id: utils.oauthTools.hmacEncryption(user.username),
+                  client_secret: utils.oauthTools.saltHashPassword(user.password),
+                  redirect_uri:'http://localhost',
+                  User:user._id
+                })
+                .then(function(client) {
+                  console.log('finished populating OAuthClient',client);
+                }).catch(console.log);
+            });
+        });
+    });
+  }
 }
 
 module.exports = seeds;
