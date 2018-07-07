@@ -6,14 +6,14 @@ const config = {
     username: process.env.SQL_USERNAME || 'root',
     password: process.env.SQL_PASSWORD || '',
     options: {
-      host: 'localhost',
-      dialect: 'mysql', // PostgreSQL, MySQL, MariaDB, SQLite and MSSQL See more: http://docs.sequelizejs.com/en/latest/
+      host: process.env.SQL_HOST || 'localhost',
+      dialect: process.env.SQL_TYPE || 'mysql', // PostgreSQL, MySQL, MariaDB, SQLite and MSSQL See more: http://docs.sequelizejs.com/en/latest/
       operatorsAliases: false,
       pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
+        max: process.env.SQL_TYPE || 10,
+        min: process.env.SQL_TYPE || 0,
+        acquire: process.env.SQL_TYPE || 30000,
+        idle: process.env.SQL_TYPE || 10000
       }
     }
   }

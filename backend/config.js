@@ -12,9 +12,9 @@ module.exports = {
 	env: process.env.NODE_ENV || 'development',
 	port: process.env.PORT || 3000,
 	base_url: process.env.BASE_URL || 'http://localhost:3000',
-	apiUrl: '/api/v1',
+	apiUrl: process.env.API_URL || '/api/v1',
 	model: setModel(database),
-	database: process.env.DATABASE_TYPE || 'mongodb',
+	database: process.env.DATABASE_TYPE || 'mongodb', // or sqldb
 	seedDBForce: true,
 	db: {
 		mongo: {
@@ -25,14 +25,14 @@ module.exports = {
 			username: process.env.SQL_USERNAME || 'root',
 			password: process.env.SQL_PASSWORD || '',
 			options: {
-				host: 'localhost',
-				dialect: 'mysql', // PostgreSQL, MySQL, MariaDB, SQLite and MSSQL See more: http://docs.sequelizejs.com/en/latest/
+				host: process.env.SQL_HOST || 'localhost',
+				dialect: process.env.SQL_TYPE || 'mysql', // PostgreSQL, MySQL, MariaDB, SQLite and MSSQL See more: http://docs.sequelizejs.com/en/latest/
 				operatorsAliases: false,
 				pool: {
-					max: 5,
-					min: 0,
-					acquire: 30000,
-					idle: 10000
+					max: process.env.SQL_TYPE || 10,
+					min: process.env.SQL_TYPE || 0,
+					acquire: process.env.SQL_TYPE || 30000,
+					idle: process.env.SQL_TYPE || 10000
 				}
 			}
 		}

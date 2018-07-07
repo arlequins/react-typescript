@@ -56,7 +56,6 @@ server.listen(config.port, () => {
 	} else {
 		// establish connection to mysql
 		const db = require('./oauth/sqldb')
-
 		db.sequelize
 		.authenticate()
 			.then(() => {

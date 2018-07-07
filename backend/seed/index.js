@@ -29,7 +29,7 @@ const defaultInfo = {
 const seeds = {
   mongodb: async () => {
     const isData = await User.find({username: defaultInfo.user.username})
-    const currnetStatus = isData.length === 0 ? true : false
+    const currnetStatus = isData.length > 0 ? true : false
 
     if (currnetStatus) {
       OAuthAccessToken.find({}).remove()
