@@ -3,7 +3,7 @@
  */
 
 var _ = require('lodash');
-var mongodb = require('./oauth');
+var mongodb = require('./mongodb');
 var User = mongodb.User;
 var OAuthClient = mongodb.OAuthClient;
 var OAuthAccessToken = mongodb.OAuthAccessToken;
@@ -128,10 +128,6 @@ function revokeToken(token) {
 
 
 function saveToken(token, client, user) {
-  console.log("saveToken",token, client, user)
-  console.log("###start")
-  console.log(token)
-  console.log("###end")
   return Promise.all([
       OAuthAccessToken.create({
         access_token: token.accessToken,

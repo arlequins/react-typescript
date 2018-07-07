@@ -5,6 +5,5 @@ db.OAuthClient = require('./OAuthClient')
 db.OAuthRefreshToken = require('./OAuthRefreshToken')
 db.OAuthScope = require('./OAuthScope')
 db.User = require('./User')
-db.Thing = require('./Thing')
 
 module.exports = db

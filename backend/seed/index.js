@@ -1,64 +1,122 @@
-'use strict';
-const mongodb = require('../oauth')
-
-const Thing = mongodb.Thing;
-const OAuthAccessToken = mongodb.OAuthAccessToken
-const OAuthAuthorizationCode = mongodb.OAuthAuthorizationCode
-const OAuthClient = mongodb.OAuthClient
-const OAuthRefreshToken = mongodb.OAuthRefreshToken
-const OAuthScope = mongodb.OAuthScope
-const User = mongodb.User
-
+'use strict'
+const mongodb = require('../oauth/mongodb')
+var sqldb = require('../oauth/sqldb');
+var config = require('../config')
 const utils = require('../utils')
 
-//OAuthAccessToken.sync({force:config.seedDBForce})
-//OAuthRefreshToken.sync({force:config.seedDBForce})
-//OAuthAuthorizationCode.sync({force:config.seedDBForce})
+const OAuthAccessToken = config.database === 'mongodb' ? mongodb.OAuthAccessToken : sqldb.OAuthAccessToken
+const OAuthAuthorizationCode = config.database === 'mongodb' ? mongodb.OAuthAuthorizationCode : sqldb.OAuthAuthorizationCode
+const OAuthClient = config.database === 'mongodb' ? mongodb.OAuthClient : sqldb.OAuthClient
+const OAuthRefreshToken = config.database === 'mongodb' ? mongodb.OAuthRefreshToken : sqldb.OAuthRefreshToken
+const OAuthScope = config.database === 'mongodb' ? mongodb.OAuthScope : sqldb.OAuthScope
+const User = config.database === 'mongodb' ? mongodb.User : sqldb.User
 
-const initialPassword = utils.oauthTools.saltHashPassword('admin')
+const defaultInfo = {
+  user: {
+    username: 'setine',
+    password: utils.oauthTools.saltHashPassword('admin')
+  },
+  setClient: (user) => {
+    return {
+      username: utils.oauthTools.hmacEncryption(user.username),
+      password: utils.oauthTools.saltHashPassword(user.password)
+    }
+  },
+  redirect_uri: 'http://localhost',
+  scope: 'website'
+}
 
+const seeds = {
+  mongodb: async () => {
+    const isData = await User.find({username: defaultInfo.user.username})
+    const currnetStatus = isData.length === 0 ? true : false
 
-const seeds = async () => {
-  const isData = await User.find({username: 'setine'})
-  const currnetStatus = isData.length === 0 ? true : false
+    if (currnetStatus) {
+      OAuthAccessToken.find({}).remove()
+      OAuthAuthorizationCode.find({}).remove()
+      OAuthRefreshToken.find({}).remove()
 
-  if (currnetStatus) {
-    OAuthScope.find({}).remove()
-    .then(function() {
-      OAuthScope.create({
-          scope: 'website',
-          is_default: false
-        },{
-          scope: 'default',
-          is_default: true
+      await OAuthScope.find({}).remove()
+      await OAuthScope.create({
+        scope: defaultInfo.scope,
+        is_default: false
+      },{
+        scope: 'default',
+        is_default: true
+      })
+
+      await console.log('finished populating OAuthScope')
+
+      await User.find({}).remove()
+
+      const user = await User.create({
+        username: defaultInfo.user.username,
+        password: defaultInfo.user.password
+      })
+
+      console.log('finished populating users', user)
+
+      try {
+        await OAuthClient.find({}).remove()
+
+        const client = await OAuthClient.create({
+          client_id: defaultInfo.setClient(user).username,
+          client_secret: defaultInfo.setClient(user).password,
+          redirect_uri: defaultInfo.redirect_uri,
+          User:user._id
         })
-        .then(function() {
-          console.log('finished populating OAuthScope');
-        });
-    });
-  User.find({}).remove()
-    .then(function() {
-      User.create({
-          username: 'setine',
-          password: utils.oauthTools.saltHashPassword('admin')
-        })
-        .then(function(user) {
-          console.log('finished populating users',user);
-          return OAuthClient.find({}).remove()
-            .then(function() {
-              OAuthClient.create({
-                  client_id: utils.oauthTools.hmacEncryption(user.username),
-                  client_secret: utils.oauthTools.saltHashPassword(user.password),
-                  redirect_uri:'http://localhost',
-                  User:user._id
-                })
-                .then(function(client) {
-                  console.log('finished populating OAuthClient',client);
-                }).catch(console.log);
-            });
-        });
-    });
+
+        console.log('finished populating OAuthClient', client)
+      } catch(err) {
+        console.log(err)
+      }
+    }
+  },
+  sqldb: async () => {
+    const isData = await User.findAll({
+      where: {username: defaultInfo.user.username},
+      attributes: ['id', 'username', 'password', 'scope']
+    })
+    const currnetStatus = isData.length === 0 ? true : false
+
+    if (currnetStatus) {
+      await User.sync({force:config.seedDBForce})
+      await User.destroy({ where: {} });
+
+      const user = {
+        username: defaultInfo.user.username,
+        password: defaultInfo.user.password
+      }
+
+      await User.bulkCreate([user])
+
+      console.log('finished populating users', user)
+
+      await OAuthClient.sync({force:config.seedDBForce})
+      await OAuthClient.destroy({ where: {} })
+
+      const client = {
+        client_id: defaultInfo.setClient(user).username,
+        client_secret: defaultInfo.setClient(user).password,
+        redirect_uri: defaultInfo.redirect_uri
+      }
+
+      await OAuthClient.bulkCreate([client])
+
+      console.log('finished populating OAuthClient')
+
+      await OAuthAccessToken.sync({force:config.seedDBForce})
+      await OAuthRefreshToken.sync({force:config.seedDBForce})
+      await OAuthAuthorizationCode.sync({force:config.seedDBForce})
+
+      await OAuthScope.sync({force:config.seedDBForce})
+      await OAuthScope.destroy({ where: {} })
+      await OAuthScope.bulkCreate([{
+        scope: defaultInfo.scope
+      }])
+      console.log('finished populating scope')
+    }
   }
 }
 
-module.exports = seeds;
+module.exports = seeds

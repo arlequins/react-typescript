@@ -1,4 +1,4 @@
-const oauthWork = require('../models')
+const oauthWork = require('../config').model
 
 /** Control Private through OAuth **/
 module.exports = function(server, apiUrl) {

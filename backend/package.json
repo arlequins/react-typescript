@@ -12,8 +12,10 @@
     "mongoose": "^5.2.1",
     "mongoose-string-query": "^0.2.5",
     "mongoose-timestamp": "^0.6.0",
+    "mysql2": "^1.5.3",
     "restify": "^7.2.1",
     "restify-errors": "^6.1.1",
-    "restify-oauth-server": "^0.2.0"
+    "restify-oauth-server": "^0.2.0",
+    "sequelize": "^4.38.0"
   }
 }
