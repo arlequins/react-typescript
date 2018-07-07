@@ -12,4 +12,5 @@ cross*/
 **/06 SimpleApp_Navigation/
 **/temp2/
 **/www
-
+**/node-oauth2-server-implementation/
+**/restify-oauth2/
