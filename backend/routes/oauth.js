@@ -1,16 +1,24 @@
 const parser = require('restify').plugins.bodyParser()
-const lifetime = 60 * 60 * 60 * 60 * 60
+// const lifetime = 60 * 60 * 60 * 60 * 60
+const lifetime = {
+  accessToken: 60 * 60,
+  refreshToken: 660 * 60 * 24 * 14
+}
 
 const oauthConfig = {
   token: {
-    accessTokenLifetime: lifetime,
-    refreshTokenLifetime: lifetime,
+    accessTokenLifetime: lifetime.accessToken,
+    refreshTokenLifetime: lifetime.refreshToken,
     requireClientAuthentication: {
       client_credentials: false,
-      authorization_code: false
+      authorization_code: false,
+      password: false
     },
     allowExtendedTokenAttributes: true,
-    scope: 'profile'
+    extendedGrantTypes: {
+      'jwt': require('../oauth/jwt')
+    },
+    alwaysIssueNewRefreshToken: false
   },
   authorize: {
     authorizationCodeLifetime: lifetime

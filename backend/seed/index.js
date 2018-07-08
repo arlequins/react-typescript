@@ -29,7 +29,7 @@ const defaultInfo = {
 const seeds = {
   mongodb: async () => {
     const isData = await User.find({username: defaultInfo.user.username})
-    const currnetStatus = isData.length > 0 ? true : false
+    const currnetStatus = isData.length === 0 ? true : false
 
     if (currnetStatus) {
       OAuthAccessToken.find({}).remove()
@@ -60,6 +60,15 @@ const seeds = {
         await OAuthClient.find({}).remove()
 
         const client = await OAuthClient.create({
+          client_id: defaultInfo.setClient(user).username,
+          client_secret: defaultInfo.setClient(user).password,
+          grant_types: 'jwt',
+          scope: defaultInfo.scope,
+          redirect_uri: defaultInfo.redirect_uri,
+          User:user._id
+        })
+
+        await OAuthClient.create({
           client_id: defaultInfo.setClient(user).username,
           client_secret: defaultInfo.setClient(user).password,
           redirect_uri: defaultInfo.redirect_uri,
@@ -95,11 +104,18 @@ const seeds = {
       await OAuthClient.sync({force:config.seedDBForce})
       await OAuthClient.destroy({ where: {} })
 
-      const client = {
+      const client = [{
+        client_id: defaultInfo.setClient(user).username,
+        client_secret: defaultInfo.setClient(user).password,
+        grant_types: 'jwt',
+        scope: defaultInfo.scope,
+        redirect_uri: defaultInfo.redirect_uri
+      },
+      {
         client_id: defaultInfo.setClient(user).username,
         client_secret: defaultInfo.setClient(user).password,
         redirect_uri: defaultInfo.redirect_uri
-      }
+      }]
 
       await OAuthClient.bulkCreate([client])
 
@@ -112,7 +128,11 @@ const seeds = {
       await OAuthScope.sync({force:config.seedDBForce})
       await OAuthScope.destroy({ where: {} })
       await OAuthScope.bulkCreate([{
-        scope: defaultInfo.scope
+        scope: defaultInfo.scope,
+        is_default: false
+      }, {
+        scope: 'default',
+        is_default: true
       }])
       console.log('finished populating scope')
     }

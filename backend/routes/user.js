@@ -15,4 +15,9 @@ module.exports = function(server, apiUrl) {
     let response = oauthWork.getClient(data.id, data.pwd);
     res.send('hello?')
   })
+  server.post('/generate', (req, res, next) => {
+    let data = req.body
+    let response = oauthWork.getClient(data.id, data.pwd);
+    res.send('hello?')
+  })
 }

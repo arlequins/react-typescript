@@ -19,7 +19,7 @@ const server = restify.createServer({
   */
 server.oauth = new OAuthServer({
 	model: config.model,
-	grants: ['authorization_code', 'client_credentials'],
+	grants: ['authorization_code', 'client_credentials', 'jwt222', 'jwt'],
 	// debug: true,
   accessTokenLifetime: 5 * 60 * 60
 })
