@@ -11,27 +11,27 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
-      unique: true,
+      unique: true
     },
-    access_token:DataTypes.STRING(256),
+    access_token:DataTypes.TEXT,
     expires:DataTypes.DATE,
     scope: DataTypes.STRING
-  }, {
-    tableName: 'oauth_access_tokens',
-    timestamps: false,
-    underscored: true,
-    classMethods: {
-      associate: function(models) {
-        OAuthAccessToken.belongsTo(models.OAuthClient, {
-          foreignKey: 'client_id',
-        });
+    }, {
+      tableName: 'oauth_access_tokens',
+      timestamps: false,
+      underscored: true
+    }
+  )
 
-        OAuthAccessToken.belongsTo(models.User, {
-          foreignKey: 'user_id',
-        });
-      },
-    },
-  });
+  OAuthAccessToken.associate = function (models) {
+    OAuthAccessToken.belongsTo(models.OAuthClient, {
+      foreignKey: 'client_id'
+    })
 
-  return OAuthAccessToken;
-};
+    OAuthAccessToken.belongsTo(models.User, {
+      foreignKey: 'user_id'
+    })
+  }
+
+  return OAuthAccessToken
+}

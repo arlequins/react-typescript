@@ -8,6 +8,7 @@ const setModel = (database) => {
 }
 
 module.exports = {
+	jwtSecret: process.env.JWT_SECRET || 'supersecret',
 	name: 'API',
 	env: process.env.NODE_ENV || 'development',
 	port: process.env.PORT || 3000,

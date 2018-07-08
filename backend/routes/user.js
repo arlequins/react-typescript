@@ -1,4 +1,6 @@
 const oauthWork = require('../config').model
+const jwt = require('restify-jwt-community')
+const jwtSecret = require('../config').jwtSecret
 
 /** Control Private through OAuth **/
 module.exports = function(server, apiUrl) {
@@ -10,9 +12,12 @@ module.exports = function(server, apiUrl) {
     })
   })
 
-  server.post('/userInfo', (req, res, next) => {
-    let data = req.body
-    let response = oauthWork.getClient(data.id, data.pwd);
+  server.get('/protected', jwt({secret: jwtSecret}), function(req, res) {
+    console.log(req.user)
+    res.json(req.user)
+  });
+
+  server.get('/userInfo', jwt, (req, res, next) => {
     res.send('hello?')
   })
   server.post('/generate', (req, res, next) => {

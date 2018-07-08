@@ -13,10 +13,6 @@ var OAuthRefreshToken = mongodb.OAuthRefreshToken;
 const isExpiredDate = (token) => {
   const today = Date.now();
   const expiredDate = Date.parse(token.expires);
-  console.log("### today")
-  console.log(today)
-  console.log("### expiredDate")
-  console.log(token.expires)
   if (today >= expiredDate) {
     return true
   } else {
@@ -30,7 +26,7 @@ const isExpiredDate = (token) => {
 
 const generateAccessToken = function(client, user, scope) {
   if (this.model.generateAccessToken) {
-    return promisify(this.model.generateAccessToken, 3)(client, user, scope)
+    return promisify(this.model.generateAccessToken, 3).call(this.model, client, user, scope)
       .then(function(accessToken) {
         return accessToken || tokenUtil.generateRandomToken();
       });
@@ -45,7 +41,7 @@ const generateAccessToken = function(client, user, scope) {
 
 const generateRefreshToken = function(client, user, scope) {
   if (this.model.generateRefreshToken) {
-    return promisify(this.model.generateRefreshToken, 3)(client, user, scope)
+    return promisify(this.model.generateRefreshToken, 3).call(this.model, client, user, scope)
       .then(function(refreshToken) {
         return refreshToken || tokenUtil.generateRandomToken();
       });
@@ -243,14 +239,14 @@ function getRefreshToken(refreshToken) {
     });
 }
 
-function validateScope(token, client, scope) {
-    console.log("validateScope", token, client, scope)
-    return (user.scope === client.scope) ? scope : false
+function validateScope(user, client, scope) {
+  console.log("validateScope", user, client, scope)
+  return (user.scope === client.scope) ? scope : false
 }
 
 function verifyScope(token, scope) {
-    console.log("verifyScope", token, scope)
-    return token.scope === scope
+  console.log("verifyScope", token, scope)
+  return token.scope === scope
 }
 module.exports = {
   // generateOAuthAccessToken: generateAccessToken, // optional - used for jwt

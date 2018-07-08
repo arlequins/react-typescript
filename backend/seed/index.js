@@ -14,7 +14,8 @@ const User = config.database === 'mongodb' ? mongodb.User : sqldb.User
 const defaultInfo = {
   user: {
     username: 'setine',
-    password: utils.oauthTools.saltHashPassword('admin')
+    password: utils.oauthTools.saltHashPassword('admin'),
+    scope: 'default'
   },
   setClient: (user) => {
     return {
@@ -51,7 +52,8 @@ const seeds = {
 
       const user = await User.create({
         username: defaultInfo.user.username,
-        password: defaultInfo.user.password
+        password: defaultInfo.user.password,
+        scope: defaultInfo.user.scope
       })
 
       console.log('finished populating users', user)
@@ -65,14 +67,14 @@ const seeds = {
           grant_types: 'jwt',
           scope: defaultInfo.scope,
           redirect_uri: defaultInfo.redirect_uri,
-          User:user._id
+          User: user._id
         })
 
         await OAuthClient.create({
           client_id: defaultInfo.setClient(user).username,
           client_secret: defaultInfo.setClient(user).password,
           redirect_uri: defaultInfo.redirect_uri,
-          User:user._id
+          User: user._id
         })
 
         console.log('finished populating OAuthClient', client)
@@ -82,10 +84,16 @@ const seeds = {
     }
   },
   sqldb: async () => {
-    const isData = await User.findAll({
-      where: {username: defaultInfo.user.username},
-      attributes: ['id', 'username', 'password', 'scope']
-    })
+    let isData = []
+    try {
+      isData = await User.findAll({
+        where: {username: defaultInfo.user.username},
+        attributes: ['id', 'username', 'password', 'scope']
+      })
+    } catch(e) {
+      console.log('there is no database')
+    }
+
     const currnetStatus = isData.length === 0 ? true : false
 
     if (currnetStatus) {
@@ -94,7 +102,8 @@ const seeds = {
 
       const user = {
         username: defaultInfo.user.username,
-        password: defaultInfo.user.password
+        password: defaultInfo.user.password,
+        scope: defaultInfo.user.scope
       }
 
       await User.bulkCreate([user])
@@ -109,15 +118,17 @@ const seeds = {
         client_secret: defaultInfo.setClient(user).password,
         grant_types: 'jwt',
         scope: defaultInfo.scope,
-        redirect_uri: defaultInfo.redirect_uri
+        redirect_uri: defaultInfo.redirect_uri,
+        user_id: 1
       },
       {
         client_id: defaultInfo.setClient(user).username,
         client_secret: defaultInfo.setClient(user).password,
-        redirect_uri: defaultInfo.redirect_uri
+        redirect_uri: defaultInfo.redirect_uri,
+        user_id: 1
       }]
 
-      await OAuthClient.bulkCreate([client])
+      await OAuthClient.bulkCreate(client)
 
       console.log('finished populating OAuthClient')
 

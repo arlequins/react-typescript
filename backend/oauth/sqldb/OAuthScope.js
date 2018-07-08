@@ -13,11 +13,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     scope: DataTypes.STRING(80),
     is_default: DataTypes.BOOLEAN
-  }, {
-    tableName: 'oauth_scopes',
-    timestamps: false,
-    underscored: true
-  })
+    }, {
+      tableName: 'oauth_scopes',
+      timestamps: false,
+      underscored: true
+    }
+  )
 
-  return OAuthScope;
+  return OAuthScope
 }

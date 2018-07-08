@@ -11,6 +11,7 @@ var OAuthAuthorizationCode = sqldb.OAuthAuthorizationCode;
 var OAuthRefreshToken = sqldb.OAuthRefreshToken;
 
 function getAccessToken(bearerToken) {
+  console.log(bearerToken)
   return OAuthAccessToken
     .findOne({
       where: {access_token: bearerToken},
@@ -23,6 +24,8 @@ function getAccessToken(bearerToken) {
       ],
     })
     .then(function (accessToken) {
+      console.log('#### here?')
+      console.log(accessToken)
       if (!accessToken) return false;
       var token = accessToken.toJSON();
       token.user = token.User;
@@ -31,6 +34,7 @@ function getAccessToken(bearerToken) {
       return token;
     })
     .catch(function (err) {
+      console.log(err)
       console.log("getAccessToken - Err: ")
     });
 }
@@ -47,7 +51,7 @@ function getClient(clientId, clientSecret) {
     .then(function (client) {
       if (!client) return new Error("client not found");
       var clientWithGrants = client.toJSON()
-      clientWithGrants.grants = ['authorization_code', 'password', 'refresh_token', 'client_credentials']
+      clientWithGrants.grants = ['authorization_code', 'password', 'refresh_token', 'client_credentials', 'jwt']
       // Todo: need to create another table for redirect URIs
       clientWithGrants.redirectUris = [clientWithGrants.redirect_uri]
       delete clientWithGrants.redirect_uri
@@ -67,6 +71,8 @@ function getUser(username, password) {
       attributes: ['id', 'username', 'password', 'scope'],
     })
     .then(function (user) {
+      console.log('#### here?')
+      console.log(user.password == password ? user.toJSON() : false)
       return user.password == password ? user.toJSON() : false;
     })
     .catch(function (err) {
@@ -118,6 +124,8 @@ function revokeToken(token) {
 
 
 function saveToken(token, client, user) {
+  console.log('###saveToken')
+  console.log(user)
   return Promise.all([
       OAuthAccessToken.create({
         access_token: token.accessToken,
@@ -237,12 +245,14 @@ function getRefreshToken(refreshToken) {
     });
 }
 
-function validateScope(token, client) {
-  return (user.scope === scope && client.scope === scope && scope !== null) ? scope : false
+function validateScope(user, client, scope) {
+  console.log("validateScope", user, client, scope)
+  return (user.scope === client.scope) ? scope : false
 }
 
 function verifyScope(token, scope) {
-    return token.scope === scope
+  console.log("verifyScope", token, scope)
+  return token.scope === scope
 }
 
 module.exports = {
@@ -260,6 +270,6 @@ module.exports = {
   revokeToken: revokeToken,
   saveToken: saveToken,//saveOAuthAccessToken, renamed to
   saveAuthorizationCode: saveAuthorizationCode, //renamed saveOAuthAuthorizationCode,
-  validateScope: validateScope,
+  // validateScope: validateScope,
   verifyScope: verifyScope,
 }

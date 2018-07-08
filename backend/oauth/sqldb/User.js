@@ -20,13 +20,13 @@ module.exports = function(sequelize, DataTypes) {
     timestamps: false,
     underscored: true,
 
-    classMethods: {
-      associate: function associate(models) {
-        //User.hasMany(models.OAuthClient);
-      },
-    },
-  });
+    // classMethods: {
+    //   associate: function associate(models) {
+    //     User.hasMany(models.OAuthClient);
+    //   },
+    // },
+    }
+  )
 
-  return User;
+  return User
 }
-

@@ -15,23 +15,22 @@ module.exports = function RefreshTokenModel(sequelize, DataTypes) {
     refresh_token: DataTypes.STRING(256),
     expires: DataTypes.DATE,
     scope: DataTypes.STRING
-  }, {
-    tableName: 'oauth_refresh_tokens',
-    timestamps: false,
-    underscored: true,
+    }, {
+      tableName: 'oauth_refresh_tokens',
+      timestamps: false,
+      underscored: true,
+    }
+  )
 
-    classMethods: {
-      associate: function associate(models) {
-        RefreshToken.belongsTo(models.OAuthClient, {
-          foreignKey: 'client_id',
-        });
+  RefreshToken.associate = function (models) {
+    RefreshToken.belongsTo(models.OAuthClient, {
+      foreignKey: 'client_id'
+    })
 
-        RefreshToken.belongsTo(models.User, {
-          foreignKey: 'user_id',
-        });
-      },
-    },
-  });
+    RefreshToken.belongsTo(models.User, {
+      foreignKey: 'user_id'
+    })
+  }
 
-  return RefreshToken;
-};
+  return RefreshToken
+}

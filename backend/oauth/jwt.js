@@ -12,6 +12,29 @@ var Promise = require('bluebird')
 var promisify = require('promisify-any').use(Promise)
 var is = require('oauth2-server/lib/validator/is')
 var util = require('util')
+const createJwt = require('jsonwebtoken')
+const jwtSecret = require('../config').jwtSecret
+
+/**
+ * Generate access token.
+ */
+
+const generateAccessTokenBasedJWT = function(client, user, scope, accessTokenExpiresAt) {
+  const today = Date.now()
+  const expiredDate = Date.parse(accessTokenExpiresAt)
+  const expired = Math.floor((expiredDate - today) / 1000)
+  var token = createJwt.sign({
+    name: user.username,
+    scope: user.scope,
+    type: client.grant_types,
+    'http://localhost': true,
+    'http://localhost/api': true,
+  }, jwtSecret, {
+    expiresIn: expired,
+    issuer: 'setine'
+  })
+  return token;
+};
 
 /**
  * Constructor.
@@ -31,7 +54,7 @@ function PasswordGrantType(options) {
   if (!options.model.saveToken) {
     throw new InvalidArgumentError('Invalid argument: model does not implement `saveToken()`');
   }
-  console.log(options)
+
   AbstractGrantType.call(this, options);
 }
 
@@ -48,7 +71,6 @@ util.inherits(PasswordGrantType, AbstractGrantType);
  */
 
 PasswordGrantType.prototype.handle = function(request, client) {
-  console.log(client)
   if (!request) {
     throw new InvalidArgumentError('Missing parameter: `request`');
   }
@@ -104,11 +126,12 @@ PasswordGrantType.prototype.getUser = function(request) {
  */
 
 PasswordGrantType.prototype.saveToken = function(user, client, scope) {
+  const accessTokenExpiresAt = this.getAccessTokenExpiresAt()
   var fns = [
     this.validateScope(user, client, scope),
-    this.generateAccessToken(client, user, scope),
+    generateAccessTokenBasedJWT(client, user, scope, accessTokenExpiresAt),
     this.generateRefreshToken(client, user, scope),
-    this.getAccessTokenExpiresAt(),
+    accessTokenExpiresAt,
     this.getRefreshTokenExpiresAt()
   ];
 
