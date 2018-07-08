@@ -7,13 +7,14 @@ const config = {
     password: process.env.SQL_PASSWORD || '',
     options: {
       host: process.env.SQL_HOST || 'localhost',
-      dialect: process.env.SQL_TYPE || 'mysql', // PostgreSQL, MySQL, MariaDB, SQLite and MSSQL See more: http://docs.sequelizejs.com/en/latest/
+      dialect: process.env.SQL_TYPE || 'mysql', // 'mysql'|'sqlite'|'postgres'|'mssql'
+      port: process.env.SQL_PORT || 3306,
       operatorsAliases: false,
       pool: {
-        max: process.env.SQL_TYPE || 10,
-        min: process.env.SQL_TYPE || 0,
-        acquire: process.env.SQL_TYPE || 30000,
-        idle: process.env.SQL_TYPE || 10000
+        max: process.env.SQL_POOL_MAX || 10,
+        min: process.env.SQL_POOL_MIN || 0,
+        acquire: process.env.SQL_POOL_ACQUIRE || 30000,
+        idle: process.env.SQL_POOL_IDLE || 10000
       }
     }
   }

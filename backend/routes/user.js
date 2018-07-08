@@ -7,13 +7,11 @@ module.exports = function(server, apiUrl) {
   server.post('/getUser', (req, res, next) => {
     let data = req.body
     oauthWork.getUser(data.id, data.pwd).then(function (user) {
-      console.log("hello", user)
       res.json(user)
     })
   })
 
   server.get('/protected', jwt({secret: jwtSecret}), function(req, res) {
-    console.log(req.user)
     res.json(req.user)
   });
 

@@ -46,7 +46,7 @@ const seeds = {
         is_default: true
       })
 
-      await console.log('finished populating OAuthScope')
+      console.log('finished populating OAuthScope')
 
       await User.find({}).remove()
 

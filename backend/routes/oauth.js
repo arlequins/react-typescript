@@ -43,8 +43,6 @@ module.exports = (server, apiUrl) => {
   })
 
   server.get(`${apiUrl}/oauth/profile`, server.oauth.authenticate({scope:'profile'}), (req, res) => {
-    console.log('###3')
-    console.log(res.oauth.token.User)
     res.json({
       profile: res.oauth.token.User,
       checking: 'hello'

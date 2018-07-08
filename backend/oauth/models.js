@@ -11,7 +11,6 @@ var OAuthAuthorizationCode = sqldb.OAuthAuthorizationCode;
 var OAuthRefreshToken = sqldb.OAuthRefreshToken;
 
 function getAccessToken(bearerToken) {
-  console.log(bearerToken)
   return OAuthAccessToken
     .findOne({
       where: {access_token: bearerToken},
@@ -24,8 +23,6 @@ function getAccessToken(bearerToken) {
       ],
     })
     .then(function (accessToken) {
-      console.log('#### here?')
-      console.log(accessToken)
       if (!accessToken) return false;
       var token = accessToken.toJSON();
       token.user = token.User;
@@ -71,8 +68,6 @@ function getUser(username, password) {
       attributes: ['id', 'username', 'password', 'scope'],
     })
     .then(function (user) {
-      console.log('#### here?')
-      console.log(user.password == password ? user.toJSON() : false)
       return user.password == password ? user.toJSON() : false;
     })
     .catch(function (err) {
@@ -124,8 +119,6 @@ function revokeToken(token) {
 
 
 function saveToken(token, client, user) {
-  console.log('###saveToken')
-  console.log(user)
   return Promise.all([
       OAuthAccessToken.create({
         access_token: token.accessToken,
