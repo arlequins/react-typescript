@@ -20,37 +20,7 @@ const isExpiredDate = (token) => {
   }
 }
 
-/**
- * Generate access token.
- */
-
-const generateAccessToken = function(client, user, scope) {
-  if (this.model.generateAccessToken) {
-    return promisify(this.model.generateAccessToken, 3).call(this.model, client, user, scope)
-      .then(function(accessToken) {
-        return accessToken || tokenUtil.generateRandomToken();
-      });
-  }
-
-  return tokenUtil.generateRandomToken();
-};
-
-/**
- * Generate refresh token.
- */
-
-const generateRefreshToken = function(client, user, scope) {
-  if (this.model.generateRefreshToken) {
-    return promisify(this.model.generateRefreshToken, 3).call(this.model, client, user, scope)
-      .then(function(refreshToken) {
-        return refreshToken || tokenUtil.generateRandomToken();
-      });
-  }
-
-  return tokenUtil.generateRandomToken();
-};
-
-function getAccessToken(bearerToken) {
+const getAccessToken = (bearerToken) => {
   console.log("getAccessToken",bearerToken)
   return OAuthAccessToken
   //User,OAuthClient
@@ -75,7 +45,7 @@ function getAccessToken(bearerToken) {
     });
 }
 
-function getClient(clientId, clientSecret) {
+const getClient = (clientId, clientSecret) => {
   const options = {client_id: clientId};
   if (clientSecret) options.client_secret = clientSecret;
   return OAuthClient
@@ -96,7 +66,7 @@ function getClient(clientId, clientSecret) {
 }
 
 
-function getUser(username, password) {
+const getUser = (username, password) => {
   return User
     .findOne({username: username})
     .then(function (user) {
@@ -122,7 +92,7 @@ const revokeToken = async (token) => {
   return !!refreshToken;
 }
 
-function saveToken(token, client, user) {
+const saveToken = (token, client, user) => {
   return Promise.all([
       OAuthAccessToken.create({
         access_token: token.accessToken,
@@ -140,7 +110,7 @@ function saveToken(token, client, user) {
       }) : [],
 
     ])
-    .then(function (resultsArray) {
+    .then(function () {
       return _.assign(  // expected to return client and user, but not returning
         {
           client: client,
@@ -152,11 +122,11 @@ function saveToken(token, client, user) {
       )
     })
     .catch(function (err) {
-      console.log("revokeToken - Err: ", err)
+      console.log("saveToken - Err: ", err)
     });
 }
 
-function getAuthorizationCode(code) {
+const getAuthorizationCode = (code) => {
   console.log("getAuthorizationCode",code)
   return OAuthAuthorizationCode
     .findOne({authorization_code: code})
@@ -179,7 +149,7 @@ function getAuthorizationCode(code) {
     });
 }
 
-function saveAuthorizationCode(code, client, user) {
+const saveAuthorizationCode = (code, client, user) =>  {
   console.log("saveAuthorizationCode",code, client, user)
   return Promise.all([
     OAuthAuthorizationCode
@@ -187,6 +157,7 @@ function saveAuthorizationCode(code, client, user) {
         expires: code.expiresAt,
         OAuthClient: client._id,
         authorization_code: code.authorizationCode,
+        redirect_uri: code.redirectUri,
         User: user._id,
         scope: code.scope
       })
@@ -199,7 +170,7 @@ function saveAuthorizationCode(code, client, user) {
     });
 }
 
-function getUserFromClient(client) {
+const getUserFromClient = (client) => {
   console.log("getUserFromClient", client)
   var options = {client_id: client.client_id};
   if (client.client_secret) options.client_secret = client.client_secret;
@@ -216,7 +187,7 @@ function getUserFromClient(client) {
     });
 }
 
-function getRefreshToken(refreshToken) {
+const getRefreshToken = (refreshToken) => {
   console.log("getRefreshToken", refreshToken)
   if (!refreshToken || refreshToken === 'undefined') return false
 //[OAuthClient, User]
@@ -239,15 +210,16 @@ function getRefreshToken(refreshToken) {
     });
 }
 
-function validateScope(user, client, scope) {
+const validateScope = (user, client, scope) => {
   console.log("validateScope", user, client, scope)
   return (user.scope === client.scope) ? scope : false
 }
 
-function verifyScope(token, scope) {
+const verifyScope = (token, scope) => {
   console.log("verifyScope", token, scope)
   return token.scope === scope
 }
+
 module.exports = {
   // generateOAuthAccessToken: generateAccessToken, // optional - used for jwt
   // generateAuthorizationCode: generateRefreshToken, // optional
@@ -263,6 +235,6 @@ module.exports = {
   revokeToken: revokeToken,
   saveToken: saveToken,//saveOAuthAccessToken, renamed to
   saveAuthorizationCode: saveAuthorizationCode, //renamed saveOAuthAuthorizationCode,
-  //validateScope: validateScope,
+  validateScope: validateScope,
   verifyScope: verifyScope,
 }

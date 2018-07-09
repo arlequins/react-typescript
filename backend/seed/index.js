@@ -13,9 +13,9 @@ const User = config.database === 'mongodb' ? mongodb.User : sqldb.User
 
 const defaultInfo = {
   user: {
-    username: 'setine',
-    password: utils.oauthTools.saltHashPassword('admin'),
-    scope: 'default'
+    username: ['setine', 'arlequin'],
+    password: [utils.oauthTools.saltHashPassword('admin'), utils.oauthTools.saltHashPassword('user')],
+    scope: ['admin', 'user']
   },
   setClient: (user) => {
     return {
@@ -23,13 +23,15 @@ const defaultInfo = {
       password: utils.oauthTools.saltHashPassword(user.password)
     }
   },
-  redirect_uri: 'http://localhost',
-  scope: 'website'
+  redirect_uri: ['http://localhost', 'http://localhost'],
+  scope: ['admin', 'user']
 }
 
 const seeds = {
   mongodb: async () => {
-    const isData = await User.find({username: defaultInfo.user.username})
+    const isData = await User.find({
+      username: defaultInfo.user.username
+    })
     const currnetStatus = isData.length === 0 ? true : false
 
     if (currnetStatus) {
@@ -39,10 +41,10 @@ const seeds = {
 
       await OAuthScope.find({}).remove()
       await OAuthScope.create({
-        scope: defaultInfo.scope,
+        scope: defaultInfo.scope[0],
         is_default: false
-      },{
-        scope: 'default',
+      }, {
+        scope: defaultInfo.scope[1],
         is_default: true
       })
 
@@ -50,35 +52,44 @@ const seeds = {
 
       await User.find({}).remove()
 
-      const user = await User.create({
-        username: defaultInfo.user.username,
-        password: defaultInfo.user.password,
-        scope: defaultInfo.user.scope
+      const admin = await User.create({
+        username: defaultInfo.user.username[0],
+        password: defaultInfo.user.password[0],
+        scope: defaultInfo.user.scope[0]
       })
 
-      console.log('finished populating users', user)
+      const user = await User.create({
+        username: defaultInfo.user.username[1],
+        password: defaultInfo.user.password[1],
+        scope: defaultInfo.user.scope[1]
+      })
+
+      console.log('finished populating admin', admin)
+      console.log('finished populating user', user)
 
       try {
         await OAuthClient.find({}).remove()
 
-        const client = await OAuthClient.create({
+        const adminClient = await OAuthClient.create({
+          client_id: defaultInfo.setClient(admin).username,
+          client_secret: defaultInfo.setClient(admin).password,
+          scope: defaultInfo.scope[0],
+          redirect_uri: defaultInfo.redirect_uri[0],
+          User: admin._id
+        })
+
+        const userClient = await OAuthClient.create({
           client_id: defaultInfo.setClient(user).username,
           client_secret: defaultInfo.setClient(user).password,
           grant_types: 'jwt',
-          scope: defaultInfo.scope,
-          redirect_uri: defaultInfo.redirect_uri,
+          scope: defaultInfo.scope[1],
+          redirect_uri: defaultInfo.redirect_uri[1],
           User: user._id
         })
 
-        await OAuthClient.create({
-          client_id: defaultInfo.setClient(user).username,
-          client_secret: defaultInfo.setClient(user).password,
-          redirect_uri: defaultInfo.redirect_uri,
-          User: user._id
-        })
-
-        console.log('finished populating OAuthClient', client)
-      } catch(err) {
+        console.log('finished populating OAuthClient', adminClient)
+        console.log('finished populating OAuthClient', userClient)
+      } catch (err) {
         console.log(err)
       }
     }
@@ -87,65 +98,91 @@ const seeds = {
     let isData = []
     try {
       isData = await User.findAll({
-        where: {username: defaultInfo.user.username},
+        where: {
+          username: defaultInfo.user.username[0]
+        },
         attributes: ['id', 'username', 'password', 'scope']
       })
-    } catch(e) {
+    } catch (e) {
       console.log('there is no database')
     }
 
     const currnetStatus = isData.length === 0 ? true : false
 
     if (currnetStatus) {
-      await User.sync({force:config.seedDBForce})
-      await User.destroy({ where: {} });
+      await OAuthScope.sync({
+        force: config.seedDBForce
+      })
+      await OAuthScope.destroy({
+        where: {}
+      })
+      await OAuthScope.bulkCreate([{
+        scope: defaultInfo.scope[0],
+        is_default: false
+      }, {
+        scope: defaultInfo.scope[1],
+        is_default: true
+      }])
+      console.log('finished populating scope')
 
-      const user = {
-        username: defaultInfo.user.username,
-        password: defaultInfo.user.password,
-        scope: defaultInfo.user.scope
-      }
+      await User.sync({
+        force: config.seedDBForce
+      })
+      await User.destroy({
+        where: {}
+      });
 
-      await User.bulkCreate([user])
+      const user = [{
+        username: defaultInfo.user.username[0],
+        password: defaultInfo.user.password[0],
+        scope: defaultInfo.user.scope[0]
+      },
+      {
+        username: defaultInfo.user.username[1],
+        password: defaultInfo.user.password[1],
+        scope: defaultInfo.user.scope[1]
+      }]
+      await User.bulkCreate(user)
 
       console.log('finished populating users', user)
 
-      await OAuthClient.sync({force:config.seedDBForce})
-      await OAuthClient.destroy({ where: {} })
+      await OAuthClient.sync({
+        force: config.seedDBForce
+      })
+      await OAuthClient.destroy({
+        where: {}
+      })
 
       const client = [{
-        client_id: defaultInfo.setClient(user).username,
-        client_secret: defaultInfo.setClient(user).password,
-        grant_types: 'jwt',
-        scope: defaultInfo.scope,
-        redirect_uri: defaultInfo.redirect_uri,
-        user_id: 1
-      },
-      {
-        client_id: defaultInfo.setClient(user).username,
-        client_secret: defaultInfo.setClient(user).password,
-        redirect_uri: defaultInfo.redirect_uri,
-        user_id: 1
-      }]
+          client_id: defaultInfo.setClient(user[0]).username,
+          client_secret: defaultInfo.setClient(user[0]).password,
+          scope: defaultInfo.scope[0],
+          redirect_uri: defaultInfo.redirect_uri[0],
+          user_id: 1
+        },
+        {
+          client_id: defaultInfo.setClient(user[1]).username,
+          client_secret: defaultInfo.setClient(user[1]).password,
+          grant_types: 'jwt',
+          scope: defaultInfo.scope[1],
+          redirect_uri: defaultInfo.redirect_uri[1],
+          user_id: 2
+        }
+      ]
 
       await OAuthClient.bulkCreate(client)
 
       console.log('finished populating OAuthClient')
 
-      await OAuthAccessToken.sync({force:config.seedDBForce})
-      await OAuthRefreshToken.sync({force:config.seedDBForce})
-      await OAuthAuthorizationCode.sync({force:config.seedDBForce})
-
-      await OAuthScope.sync({force:config.seedDBForce})
-      await OAuthScope.destroy({ where: {} })
-      await OAuthScope.bulkCreate([{
-        scope: defaultInfo.scope,
-        is_default: false
-      }, {
-        scope: 'default',
-        is_default: true
-      }])
-      console.log('finished populating scope')
+      await OAuthAccessToken.sync({
+        force: config.seedDBForce
+      })
+      await OAuthRefreshToken.sync({
+        force: config.seedDBForce
+      })
+      await OAuthAuthorizationCode.sync({
+        force: config.seedDBForce
+      })
     }
   }
 }

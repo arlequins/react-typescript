@@ -23,7 +23,8 @@ const generateAccessTokenBasedJWT = function(client, user, scope, accessTokenExp
   const today = Date.now()
   const expiredDate = Date.parse(accessTokenExpiresAt)
   const expired = Math.floor((expiredDate - today) / 1000)
-  var token = createJwt.sign({
+
+  const token = createJwt.sign({
     name: user.username,
     scope: user.scope,
     type: client.grant_types,

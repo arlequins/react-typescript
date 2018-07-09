@@ -1,8 +1,59 @@
 const parser = require('restify').plugins.bodyParser()
-// const lifetime = 60 * 60 * 60 * 60 * 60
+const Request = require('oauth2-server').Request
+const models = require('../config').model
+
 const lifetime = {
+  authorizeToken: 5 * 60,
   accessToken: 60 * 60,
   refreshToken: 660 * 60 * 24 * 14
+}
+
+const authenticateHandler = {
+  handle: async function (req, res) {
+    var request = new Request(req);
+
+    const queries = request.body
+
+    const clientId = queries.client_id
+    const clientSecret = queries.client_secret
+    const redirectUri = queries.redirect_uri
+    const accessToken = queries.access_token
+    const scope = queries.scope
+
+    // get clientId
+    const clientInfo = await models.getClient(clientId, clientSecret)
+
+    // checking redirectUrl
+    let count = 0
+    for (const v of clientInfo.redirectUris) {
+      if (v === redirectUri) {
+        count ++
+      }
+    }
+
+    if (count === 0) {
+      return false
+    }
+
+    if (scope !== clientInfo.scope) {
+      return false
+    }
+
+    // get accessToken
+    const accessTokenInfo = await models.getAccessToken(accessToken)
+
+    if (scope !== accessTokenInfo.scope) {
+      return false
+    }
+
+    // get userInfo
+    const userInfo = await models.getUserFromClient(clientInfo)
+
+    if (scope !== userInfo.scope) {
+      return false
+    }
+    return userInfo
+  }
 }
 
 const oauthConfig = {
@@ -11,7 +62,7 @@ const oauthConfig = {
     refreshTokenLifetime: lifetime.refreshToken,
     requireClientAuthentication: {
       client_credentials: false,
-      authorization_code: false,
+      authorization_code: true,
       password: false
     },
     allowExtendedTokenAttributes: true,
@@ -21,7 +72,11 @@ const oauthConfig = {
     alwaysIssueNewRefreshToken: false
   },
   authorize: {
-    authorizationCodeLifetime: lifetime
+    authorizationCodeLifetime: lifetime.authorizeToken,
+    // scope: 'admin',
+    // addAcceptedScopesHeader: true,
+    // addAuthorizedScopesHeader: true
+    authenticateHandler: authenticateHandler
   }
 }
 
@@ -42,7 +97,7 @@ module.exports = (server, apiUrl) => {
     }
   })
 
-  server.get(`${apiUrl}/oauth/profile`, server.oauth.authenticate({scope:'profile'}), (req, res) => {
+  server.get(`${apiUrl}/oauth/profile`, server.oauth.authenticate({scope:'admin'}), (req, res) => {
     res.json({
       profile: res.oauth.token.User,
       checking: 'hello'
