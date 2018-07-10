@@ -2,7 +2,7 @@ const config = require('./config')
 const restify = require('restify')
 const mongoose = require('mongoose')
 const restifyPlugins = require('restify').plugins
-const OAuthServer = require('restify-oauth-server')
+const OAuthServer = require('./oauth/OAuthServer')
 const seeds = require('./seed')
 const database = process.env.DATABASE_TYPE || 'mongodb'
 

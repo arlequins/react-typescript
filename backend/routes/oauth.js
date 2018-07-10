@@ -1,6 +1,5 @@
 const parser = require('restify').plugins.bodyParser()
 const oauthConfig = require('../oauth/settings')
-console.log(oauthConfig)
 
 /** Make through OAuth **/
 module.exports = (server, apiUrl) => {

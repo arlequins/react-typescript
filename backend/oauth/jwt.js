@@ -12,31 +12,7 @@ var Promise = require('bluebird')
 var promisify = require('promisify-any').use(Promise)
 var is = require('oauth2-server/lib/validator/is')
 var util = require('util')
-const createJwt = require('jsonwebtoken')
-const jwtSecret = require('../config').jwtSecret
-
-/**
- * Generate access token.
- */
-
-const generateAccessTokenBasedJWT = function(client, user, scope, accessTokenExpiresAt) {
-  const today = Date.now()
-  const expiredDate = Date.parse(accessTokenExpiresAt)
-  const expired = Math.floor((expiredDate - today) / 1000)
-
-  const token = createJwt.sign({
-    name: user.username,
-    scope: user.scope,
-    type: client.grant_types,
-    'http://localhost': true,
-    'http://localhost/api': true,
-  }, jwtSecret, {
-    expiresIn: expired,
-    issuer: 'setine'
-  })
-  return token;
-};
-
+const generateAccessTokenBasedJWT = require('./settings').generateAccessTokenBasedJWT
 /**
  * Constructor.
  */
