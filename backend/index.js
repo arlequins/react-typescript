@@ -19,9 +19,7 @@ const server = restify.createServer({
   */
 server.oauth = new OAuthServer({
 	model: config.model,
-	grants: ['authorization_code', 'client_credentials', 'jwt222', 'jwt'],
-	// debug: true,
-  accessTokenLifetime: 5 * 60 * 60
+	grants: ['authorization_code', 'client_credentials', 'password', 'jwt']
 })
 
 server.pre((req, res, next) => {
@@ -44,18 +42,29 @@ server.listen(config.port, () => {
 		mongoose.Promise = global.Promise
 		mongoose.connect(config.db.mongo.uri, { useNewUrlParser: true })
 		const db = mongoose.connection
+
+		// additional db
+		config.additionalModel(db)
+
+		// startup
 		db.on('error', (err) => {
 			console.error(err)
 			process.exit(1)
 		})
 		db.once('open', () => {
+			console.log('Connection has been established successfully.')
 			seeds.mongodb()
 			require('./routes')(server, config.apiUrl)
 			console.log(`Server is listening on port ${config.port}`)
 		})
 	} else {
-		// establish connection to mysql
+		// establish connection to sqldb
 		const db = require('./oauth/sqldb')
+
+		// additional db
+		config.additionalModel(db)
+
+		// startup
 		db.sequelize
 		.authenticate()
 			.then(() => {

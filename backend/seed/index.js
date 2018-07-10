@@ -13,9 +13,9 @@ const User = config.database === 'mongodb' ? mongodb.User : sqldb.User
 
 const defaultInfo = {
   user: {
-    username: ['setine', 'arlequin'],
-    password: [utils.oauthTools.saltHashPassword('admin'), utils.oauthTools.saltHashPassword('user')],
-    scope: ['admin', 'user']
+    username: config.seedInfo.user.username,
+    password: [utils.oauthTools.saltHashPassword(config.seedInfo.user.username[0]), utils.oauthTools.saltHashPassword(config.seedInfo.user.username[1])],
+    scope: config.seedInfo.user.scope
   },
   setClient: (user) => {
     return {
@@ -23,8 +23,8 @@ const defaultInfo = {
       password: utils.oauthTools.saltHashPassword(user.password)
     }
   },
-  redirect_uri: ['http://localhost', 'http://localhost'],
-  scope: ['admin', 'user']
+  redirect_uri: config.seedInfo.redirectUri,
+  scope: config.seedInfo.scope
 }
 
 const seeds = {

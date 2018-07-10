@@ -1,5 +1,5 @@
 const config = require('./../../config').db
-const Sequelize = require('sequelize');
+const Sequelize = require('sequelize')
 // const config = {
 //   sqldb: {
 //     database: process.env.SQL_DATABASE || 'oauth',
@@ -29,11 +29,7 @@ var db = {
   )
 };
 
-db.OAuthAccessToken = db.sequelize.import('./OAuthAccessToken')
-db.OAuthAuthorizationCode = db.sequelize.import('./OAuthAuthorizationCode')
-db.OAuthClient = db.sequelize.import('./OAuthClient')
-db.OAuthRefreshToken = db.sequelize.import('./OAuthRefreshToken')
-db.OAuthScope = db.sequelize.import('./OAuthScope')
-db.User = db.sequelize.import('./User')
+db.Todo = db.sequelize.import('./Todo')
 
 module.exports = db
+

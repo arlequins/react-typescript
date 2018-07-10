@@ -19,5 +19,4 @@ const TodoSchema = new mongoose.Schema(
 )
 TodoSchema.plugin(timestamps)
 TodoSchema.plugin(mongooseStringQuery)
-const Todo = mongoose.model('Todo', TodoSchema)
-module.exports = Todo
+module.exports = mongoose.model('Todo', TodoSchema)

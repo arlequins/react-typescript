@@ -17,7 +17,7 @@ const isExpiredDate = (token) => {
     return true
   } else {
     return false
-  }
+  }verifyScopeverifyScopeverifyScope
 }
 
 const getAccessToken = (bearerToken) => {
@@ -79,16 +79,22 @@ const getUser = (username, password) => {
 }
 
 const revokeAuthorizationCode = async (code) => {
-  const authorizationCode = await OAuthAuthorizationCode.findOne({
+  const authorizationCode = await OAuthAuthorizationCode.findOneAndUpdate({
     authorization_code: code.code
-  })
+  },
+  { expires: new Date('2015-05-28T06:59:53.000Z') },
+  { upsert: true })
+
   return !!authorizationCode
 }
 
 const revokeToken = async (token) => {
-  const refreshToken = await OAuthRefreshToken.find({
+  const refreshToken = await OAuthRefreshToken.findOneAndUpdate({
     refresh_token: token.refreshToken
-  })
+  },
+  { expires: new Date('2015-05-28T06:59:53.000Z') },
+  { upsert: true })
+
   return !!refreshToken;
 }
 

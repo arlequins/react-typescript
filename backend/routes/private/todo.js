@@ -5,7 +5,7 @@ const errors = require('restify-errors')
 /**
  * Model Schema
  */
-const Todo = require('../../models/todo')
+const Todo = require('../../models/mongodb/Todo')
 
 module.exports = function(server, apiUrl) {
 	const requestUrl = `${apiUrl}/todos_secrect`

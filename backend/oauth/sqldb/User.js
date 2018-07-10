@@ -16,17 +16,15 @@ module.exports = function(sequelize, DataTypes) {
     password: DataTypes.STRING(32),
     scope: DataTypes.STRING
   }, {
-    tableName: 'users', // oauth_users
+    tableName: 'users',
     timestamps: false,
-    underscored: true,
-
-    // classMethods: {
-    //   associate: function associate(models) {
-    //     User.hasMany(models.OAuthClient);
-    //   },
-    // },
+    underscored: true
     }
   )
+
+  // User.associate = function (models) {
+  //   User.hasMany(models.OAuthClient)
+  // }
 
   return User
 }

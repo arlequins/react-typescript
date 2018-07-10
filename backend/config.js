@@ -7,7 +7,23 @@ const setModel = (database) => {
 	}
 }
 
+const setAdditionalModel = (database) => {
+	if (database === 'mongodb') {
+		return require('./models/mongodb')
+	} else {
+		return require('./models/sqldb')
+	}
+}
+
 module.exports = {
+	seedInfo: {
+		user: {
+			username: ['setine', 'arlequin'],
+			scope: ['admin', 'user']
+		},
+		redirectUri: ['http://localhost', 'http://localhost'],
+		scope: ['admin', 'user']
+	},
 	jwtSecret: process.env.JWT_SECRET || 'supersecret',
 	name: 'API',
 	env: process.env.NODE_ENV || 'development',
@@ -15,11 +31,12 @@ module.exports = {
 	base_url: process.env.BASE_URL || 'http://localhost:3000',
 	apiUrl: process.env.API_URL || '/api/v1',
 	model: setModel(database),
+	additionalModel: setAdditionalModel(database),
 	database: process.env.DATABASE_TYPE || 'mongodb', // or sqldb
 	seedDBForce: true,
 	db: {
 		mongo: {
-			uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/setine',
+			uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/oauth',
 		},
 		sqldb: {
 			database: process.env.SQL_DATABASE || 'oauth',

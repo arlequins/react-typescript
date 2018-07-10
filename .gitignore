@@ -16,3 +16,4 @@ cross*/
 **/restify-oauth2/
 **/.project
 **/.settings
+**/yarn.lock
