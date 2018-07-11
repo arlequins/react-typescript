@@ -1,23 +1,40 @@
-'use strict';
+const createJwt = require('jsonwebtoken')
+const setjwtInfo = require('../config').setjwtInfo
+const lifetime = {
+  accessToken: 30 * 60 * 60
+}
+
+/**
+ * Generate access token.
+ */
+
+const generateAccessTokenBasedJWT = (client, user, scope, accessTokenExpiresAt) => {
+  const today = Date.now()
+  const expiredDate = Date.parse(accessTokenExpiresAt)
+  const expired = Math.floor((expiredDate - today) / 1000)
+  const jwtInfo = setjwtInfo(client, user, scope, expired)
+  return createJwt.sign(jwtInfo)
+}
 
 /**
  * Module dependencies.
  */
 
-var AbstractGrantType = require('oauth2-server/lib/grant-types/abstract-grant-type')
-var InvalidArgumentError = require('oauth2-server/lib/errors/invalid-argument-error')
-var InvalidGrantError = require('oauth2-server/lib/errors/invalid-grant-error')
-var InvalidRequestError = require('oauth2-server/lib/errors/invalid-request-error')
-var Promise = require('bluebird')
-var promisify = require('promisify-any').use(Promise)
-var is = require('oauth2-server/lib/validator/is')
-var util = require('util')
-const generateAccessTokenBasedJWT = require('./settings').generateAccessTokenBasedJWT
+const AbstractGrantType = require('oauth2-server/lib/grant-types/abstract-grant-type')
+const InvalidArgumentError = require('oauth2-server/lib/errors/invalid-argument-error')
+const InvalidGrantError = require('oauth2-server/lib/errors/invalid-grant-error')
+const InvalidRequestError = require('oauth2-server/lib/errors/invalid-request-error')
+const Promise = require('bluebird')
+const promisify = require('promisify-any').use(Promise)
+const is = require('oauth2-server/lib/validator/is')
+const util = require('util')
+
 /**
  * Constructor.
  */
 
 function PasswordGrantType(options) {
+  options.accessTokenLifetime = lifetime.accessToken
   options = options || {};
 
   if (!options.model) {
@@ -107,19 +124,15 @@ PasswordGrantType.prototype.saveToken = function(user, client, scope) {
   var fns = [
     this.validateScope(user, client, scope),
     generateAccessTokenBasedJWT(client, user, scope, accessTokenExpiresAt),
-    this.generateRefreshToken(client, user, scope),
-    accessTokenExpiresAt,
-    this.getRefreshTokenExpiresAt()
+    accessTokenExpiresAt
   ];
 
   return Promise.all(fns)
     .bind(this)
-    .spread(function(scope, accessToken, refreshToken, accessTokenExpiresAt, refreshTokenExpiresAt) {
+    .spread(function(scope, accessToken, accessTokenExpiresAt) {
       var token = {
         accessToken: accessToken,
         accessTokenExpiresAt: accessTokenExpiresAt,
-        refreshToken: refreshToken,
-        refreshTokenExpiresAt: refreshTokenExpiresAt,
         scope: scope
       };
 

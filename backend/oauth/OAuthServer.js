@@ -109,7 +109,7 @@ RestifyOAuthServer.prototype.token = function (options) {
     const request = new Request(req)
     const response = new Response(res)
 
-    console.log(request.body.)
+    console.log(request.body)
     const requestParams = request.body
     if (requestParams.grant_type.hasOwnProperty('grant_type')) {
       if (requestParams.grant_type === 'refresh_token') {

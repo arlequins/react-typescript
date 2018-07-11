@@ -15,6 +15,21 @@ const setAdditionalModel = (database) => {
 	}
 }
 
+const jwtSecret = process.env.JWT_SECRET || 'supersecret'
+
+const setjwtInfo = (client, user, scope, expired) => {
+  return {
+    name: user.username,
+    scope: user.scope,
+    type: client.grant_types,
+    'http://localhost': true,
+    'http://localhost/api': true,
+  }, jwtSecret, {
+    expiresIn: expired,
+    issuer: 'setine'
+  }
+}
+
 module.exports = {
 	seedInfo: {
 		user: {
@@ -24,7 +39,8 @@ module.exports = {
 		redirectUri: ['http://localhost', 'http://localhost'],
 		scope: ['admin', 'user']
 	},
-	jwtSecret: process.env.JWT_SECRET || 'supersecret',
+	setjwtInfo: setjwtInfo,
+	jwtSecret: jwtSecret,
 	name: 'API',
 	env: process.env.NODE_ENV || 'development',
 	port: process.env.PORT || 3000,

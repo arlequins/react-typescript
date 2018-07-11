@@ -1,8 +1,6 @@
 const Request = require('oauth2-server').Request
 const models = require('../config').model
 const methodjwt = require('./jwt')
-const createJwt = require('jsonwebtoken')
-const jwtSecret = require('../config').jwtSecret
 
 const lifetime = {
   authorizeToken: 5 * 60,
@@ -58,30 +56,7 @@ const authenticateHandler = {
   }
 }
 
-/**
- * Generate access token.
- */
-
-const generateAccessTokenBasedJWT = function(client, user, scope, accessTokenExpiresAt) {
-  const today = Date.now()
-  const expiredDate = Date.parse(accessTokenExpiresAt)
-  const expired = Math.floor((expiredDate - today) / 1000)
-
-  const token = createJwt.sign({
-    name: user.username,
-    scope: user.scope,
-    type: client.grant_types,
-    'http://localhost': true,
-    'http://localhost/api': true,
-  }, jwtSecret, {
-    expiresIn: expired,
-    issuer: 'setine'
-  })
-  return token;
-}
-
 module.exports = {
-  generateAccessTokenBasedJWT: generateAccessTokenBasedJWT,
   token: {
     accessTokenLifetime: lifetime.accessToken,
     refreshTokenLifetime: lifetime.refreshToken,
