@@ -9,3 +9,4 @@
 # build
 docker/app/*/app
 express/server
+express/log

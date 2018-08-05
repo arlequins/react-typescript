@@ -13,6 +13,12 @@ const USER_NODE_ENV = {
   INNER_API_URL: process.env.INNER_API_URL !== undefined ? process.env.INNER_API_URL : 'http://localhost:3100',
 }
 
+const isNeedWatch = {
+  watch: JSON.parse(process.env.npm_config_argv).original[1] === 'ssr' ? true : false
+}
+
+const isNeedBundle = JSON.parse(process.env.npm_config_argv).original[1] === 'bundle' ? [ new BundleAnalyzerPlugin() ] : []
+
 const webpackConfig = (webpack, path, utils, config, mode) => {
   let devMode = {
     devtool: 'source-map',
@@ -23,12 +29,13 @@ const webpackConfig = (webpack, path, utils, config, mode) => {
     utils.copyImagesWebpackPlugin,
     utils.copyFontsWebpackPlugin,
     utils.manifestPlugin,
-    // new BundleAnalyzerPlugin(),
+    ...isNeedBundle,
   ]
 
   const indexFile = mode.dev ? 'development' : mode.build ? 'production' : 'universal'
 
   let initial = {
+    ...isNeedWatch,
     entry: {
       'polyfill': [
         'babel-polyfill',
@@ -230,7 +237,10 @@ const webpackConfig = (webpack, path, utils, config, mode) => {
 const clientConfig = webpackConfig(webpack, path, utils, config, mode)
 
 const serverConfig = {
-  entry: "./src/server/index",
+  ...isNeedWatch,
+  entry: {
+    'server': './src/server/index',
+  },
   target: "node",
   externals: [nodeExternals()],
   output: {

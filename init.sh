@@ -50,7 +50,11 @@ else
 
   if [ "${RUNTYPE}" == "local" ] ; then
     # react-typescript
-    rm -rf express/backend/server express/backend/dist docker/nginx/${TARGET_FOLDER}/html/app
+    rm -rf express/server express/dist docker/app/${RUNTYPE}/app docker/nginx/${TARGET_FOLDER}/html/static
+    cp -R express docker/app/${RUNTYPE}/app
+    cp -R express docker/nginx/${RUNTYPE}/html/static
+    rm -rf docker/app/${RUNTYPE}/app/dist
+    
     echo "come here"
     # express
 
@@ -60,7 +64,7 @@ else
       exit 1
     else
       # react-typescript
-      rm -rf express/backend/server express/backend/dist docker/nginx/${TARGET_FOLDER}/html/app
+      rm -rf express/server express/dist docker/nginx/${TARGET_FOLDER}/html/app
       # express
 
     fi

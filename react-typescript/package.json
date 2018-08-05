@@ -17,6 +17,7 @@
     "test:update": "jest --config jest.config.json -u",
     "start": "webpack-dev-server --mode development --hot --open --progress --color --port 5000",
     "build": "webpack --mode production -p --colors",
+    "bundle": "webpack --mode production -p --colors",
     "ssr": "webpack --mode production",
     "ssr:localhost-deploy": "OUTER_API_URL=http://localhost/api INNER_API_URL=http://api:3100 webpack --mode production",
     "ssr:production-deploy": "OUTER_API_URL=https://www.setine.net/api INNER_API_URL=http://api:3100 webpack --mode production"

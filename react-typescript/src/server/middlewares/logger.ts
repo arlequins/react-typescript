@@ -12,7 +12,7 @@ require('winston-daily-rotate-file')
 
 const target = 'app'
 const prefix = `setine-${target}`
-const LOGS_DIR = process.env.LOG_LEVEL !== 'nodemon' ? `/var/log/${target}` : path.join(__dirname, '..', 'log')
+const LOGS_DIR = process.env.LOG_LEVEL !== 'nodemon' ? `/var/log/${target}` : path.join(__dirname, '..', '..', '..', 'log')
 
 const myFormat = format.printf((info: any) => {
   return info.message.replace('\n', '')
