@@ -10,11 +10,11 @@ phases:
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
   install:
     commands:
-      - chmod +x ./initialFire.sh
+      - chmod +x ./init.sh
       - if [ -e /root/node.tar ]; then tar -xf /root/node.tar -C $CODEBUILD_SRC_DIR/react-typescript; fi
   build:
     commands:
-      - ./initialFire.sh
+      - ./init.sh -t production
       - cd $CODEBUILD_SRC_DIR/react-typescript
       - if [ -e $CODEBUILD_SRC_DIR/react-typescript/node_modules ]; then tar -cf /root/node.tar node_modules; fi
       - cd $CODEBUILD_SRC_DIR
