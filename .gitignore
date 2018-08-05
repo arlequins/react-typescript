@@ -1,19 +1,11 @@
 **/node-v*-*-x*/
-**/.gradle
+**/node_modules
 **/package-lock.json
 .vscode
-react-redux-typescript-boilerplate/
-backup/
-**/node_modules
-example*/
-cross*/
 **/dist
-**/temp
-**/06 SimpleApp_Navigation/
-**/temp2/
 **/www
-**/node-oauth2-server-implementation/
-**/restify-oauth2/
-**/.project
-**/.settings
 **/yarn.lock
+
+# build
+docker/app/*/app
+express/server

@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_CACHE_ROOT: /root/.docker-cache
+
+phases:
+  pre_build:
+    commands:
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  install:
+    commands:
+      - chmod +x ./initialFire.sh
+      - if [ -e /root/node.tar ]; then tar -xf /root/node.tar -C $CODEBUILD_SRC_DIR/react-typescript; fi
+  build:
+    commands:
+      - ./initialFire.sh
+      - cd $CODEBUILD_SRC_DIR/react-typescript
+      - if [ -e $CODEBUILD_SRC_DIR/react-typescript/node_modules ]; then tar -cf /root/node.tar node_modules; fi
+      - cd $CODEBUILD_SRC_DIR
+  post_build:
+    commands:
+      - printf '[{"name":"app","imageUri":"%s"}]' $REPOSITORY_URI/$REPO1_NAME:$IMAGE_TAG > imagedefinitions.json
+      - less imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
+cache:
+    paths:
+      - '/root/node.tar'
+      - '/root/.*/**/*'

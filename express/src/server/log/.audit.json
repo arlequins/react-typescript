@@ -1,0 +1,69 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "src/server/log/.audit.json",
+    "files": [
+        {
+            "date": 1533469324760,
+            "name": "src/server/log/setine-app-error.log.2018_08_05",
+            "hash": "ca7019c3fa42f6f740ce9dcf741a8a75"
+        },
+        {
+            "date": 1533469324764,
+            "name": "src/server/log/setine-app-warn.log.2018_08_05",
+            "hash": "67fb3bfd5c01d58fb727985961a06688"
+        },
+        {
+            "date": 1533469324765,
+            "name": "src/server/log/setine-app-normal.log.2018_08_05",
+            "hash": "40b47204e043d960fb91652947e8cf3b"
+        },
+        {
+            "date": 1533469324766,
+            "name": "src/server/log/setine-app-access.log.2018_08_05",
+            "hash": "eed3be7df2cef8092c7cfdb888a8ce4c"
+        },
+        {
+            "date": 1533469383216,
+            "name": "src/server/log/setine-app-error.log.2018_08_05",
+            "hash": "f9a1c39e2ab7c8caf57ce2873b0be5cd"
+        },
+        {
+            "date": 1533469383219,
+            "name": "src/server/log/setine-app-warn.log.2018_08_05",
+            "hash": "7971622bb595d69a0a47028223b9ff0c"
+        },
+        {
+            "date": 1533469383220,
+            "name": "src/server/log/setine-app-normal.log.2018_08_05",
+            "hash": "0c38cf70a7990badddef8d993a6d4053"
+        },
+        {
+            "date": 1533469383221,
+            "name": "src/server/log/setine-app-access.log.2018_08_05",
+            "hash": "ceb2f2b89c787afc07dc12f80d49e156"
+        },
+        {
+            "date": 1533469454774,
+            "name": "src/server/log/setine-app-error.log.2018_08_05",
+            "hash": "58de414ff767cc40467c598078996ced"
+        },
+        {
+            "date": 1533469454777,
+            "name": "src/server/log/setine-app-warn.log.2018_08_05",
+            "hash": "c073954697eb1d78994b9dbb6bda7737"
+        },
+        {
+            "date": 1533469454778,
+            "name": "src/server/log/setine-app-normal.log.2018_08_05",
+            "hash": "92843ff371d0511f1752cee10723d168"
+        },
+        {
+            "date": 1533469454780,
+            "name": "src/server/log/setine-app-access.log.2018_08_05",
+            "hash": "677ef889e108d61a3d3ceb4e1ca770bf"
+        }
+    ]
+}

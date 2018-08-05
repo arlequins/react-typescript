@@ -1,0 +1,37 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "main": "./server/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cors": "^2.8.4",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "moment-timezone": "^0.5.21",
+    "morgan": "^1.9.0",
+    "react": "^16.4.1",
+    "react-async-component": "^2.0.0",
+    "react-device-detect": "^1.5.8",
+    "react-dom": "^16.4.1",
+    "react-helmet": "^5.2.0",
+    "react-hot-loader": "^4.3.3",
+    "react-redux": "^5.0.7",
+    "react-router": "^4.3.1",
+    "react-router-config": "^1.0.0-beta.4",
+    "react-router-dom": "^4.3.1",
+    "react-spinners": "^0.3.3",
+    "redux": "^3.7.2",
+    "redux-observable": "^0.16.0",
+    "rxjs": "^5.4.3",
+    "rxjs-es": "^5.0.0-beta.12",
+    "stack-trace": "^0.0.10",
+    "url-join": "^4.0.0",
+    "winston": "^3.0.0",
+    "winston-daily-rotate-file": "^3.3.0",
+    "body-parser": "^1.18.3"
+  },
+  "devDependencies": {
+  }
+}
