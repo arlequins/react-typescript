@@ -8,5 +8,6 @@
 
 # build
 docker/app/*/app
+docker/nginx/*/html/static
 express/server
 express/log

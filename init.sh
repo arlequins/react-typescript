@@ -50,12 +50,26 @@ else
 
   if [ "${RUNTYPE}" == "local" ] ; then
     # react-typescript
-    rm -rf express/server express/dist docker/app/${RUNTYPE}/app docker/nginx/${TARGET_FOLDER}/html/static
-    cp -R express docker/app/${RUNTYPE}/app
-    cp -R express docker/nginx/${RUNTYPE}/html/static
-    rm -rf docker/app/${RUNTYPE}/app/dist
+    rm -rf express/server express/dist docker/app/${TARGET_FOLDER}/app docker/nginx/${TARGET_FOLDER}/html/static
+    mkdir -p docker/app/${TARGET_FOLDER}/app docker/nginx/${TARGET_FOLDER}/html/static
+    cd react-typescript
+    yarn install
+    yarn run ssr:localhost-deploy
+    cd ..
+
+    # static
+    cp -R express/dist/static docker/nginx/${TARGET_FOLDER}/html
+
+    # server
+    cp express/package.json docker/app/${TARGET_FOLDER}/app/package.json
+    cp express/assets.json docker/app/${TARGET_FOLDER}/app/assets.json
+    cp express/manifest.json docker/app/${TARGET_FOLDER}/app/manifest.json
+    cp express/sw.js docker/app/${TARGET_FOLDER}/app/sw.js
+    cp -R express/pm2 docker/app/${TARGET_FOLDER}/app/pm2
+    cp -R express/server docker/app/${TARGET_FOLDER}/app/server
     
-    echo "come here"
+    # docker local start
+
     # express
 
   elif [ "${RUNTYPE}" == "prod" ] ; then
